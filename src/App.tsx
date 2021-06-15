@@ -57,7 +57,7 @@ export default function Calculator() {
   const classes = useStyles();
   const [blueConvertionRate, setBlueConvertionRate] =
     useState<BluelyticsResponse>({});
-  const [arsToConvert, setArsToConvert] = useState(0);
+  const [arsToConvert, setArsToConvert] = useState(1);
   const [currencyToConvert, setCurrencyToConvert] = useState<Currency>();
   const [currencyList, setCurrencyList] = useState<CurrenciesResponse>([]);
   const [convertedAmount, setConvertedAmount] = useState(0);
@@ -115,6 +115,7 @@ export default function Calculator() {
           <Grid container spacing={2}>
             <Grid item xs={6} sm={6}>
               <TextField
+                type="number"
                 autoComplete="ARS"
                 variant="outlined"
                 required
