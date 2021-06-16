@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import {
@@ -15,19 +15,6 @@ import {
   FormHelperText,
 } from "@material-ui/core";
 import { BluelyticsResponse, CurrenciesResponse, Currency } from "./types";
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  form: {
-    width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(3),
-  },
-}));
 
 const requestBlueConvertionRate = (
   setBlueConvertionDate: React.Dispatch<
@@ -53,14 +40,35 @@ const requestCurrencies = (setCurrencies: Function) => {
     });
 };
 
-export default function Calculator() {
+const convertFromArs = (
+  arsToConvert: number,
+  usdBlueValue: number,
+  currencyToConvertValue: number
+): number => {
+  const convertedInUsd = arsToConvert / usdBlueValue;
+  const convertedAmount = convertedInUsd * currencyToConvertValue;
+  return Math.round(convertedAmount * 100) / 100;
+};
+
+const convertToArs = (
+  valueToConvert: number,
+  usdBlueValue: number,
+  currencyToConvertValue: number
+): number => {
+  const convertedInUsd = valueToConvert / currencyToConvertValue;
+  const convertedAmount = convertedInUsd * usdBlueValue;
+  return Math.round(convertedAmount * 100) / 100;
+};
+
+export default function App() {
   const classes = useStyles();
-  const [blueConvertionRate, setBlueConvertionRate] =
-    useState<BluelyticsResponse>({});
+  const convertingToArs = useRef(false);
   const [arsToConvert, setArsToConvert] = useState(1);
+  const [convertedAmount, setConvertedAmount] = useState(0);
   const [currencyToConvert, setCurrencyToConvert] = useState<Currency>();
   const [currencyList, setCurrencyList] = useState<CurrenciesResponse>([]);
-  const [convertedAmount, setConvertedAmount] = useState(0);
+  const [blueConvertionRate, setBlueConvertionRate] =
+    useState<BluelyticsResponse>({});
 
   useEffect(() => {
     requestBlueConvertionRate(setBlueConvertionRate);
@@ -75,27 +83,55 @@ export default function Calculator() {
   }, []);
 
   useEffect(() => {
-    if (currencyToConvert && blueConvertionRate && blueConvertionRate.blue) {
-      const convertedInUsd = arsToConvert / blueConvertionRate.blue?.value_sell;
-      const convertedAmount = convertedInUsd * currencyToConvert.value;
-      const convertedAmountInDecimals = Math.round(convertedAmount * 100) / 100;
-
-      setConvertedAmount(convertedAmountInDecimals);
+    if (convertingToArs.current) {
+      convertingToArs.current = false;
+    } else if (
+      currencyToConvert &&
+      blueConvertionRate &&
+      blueConvertionRate.blue
+    ) {
+      const convertedAmount = convertFromArs(
+        arsToConvert,
+        blueConvertionRate.blue.value_sell,
+        currencyToConvert.value
+      );
+      setConvertedAmount(convertedAmount);
     }
   }, [currencyToConvert, arsToConvert, blueConvertionRate]);
 
-  const changeCurrencyToConvert = (
+  const handleCurrencyToConvertChange = (
     event: React.ChangeEvent<{ value: unknown }>
   ) => {
-    const currencyToConvertObj: Currency | undefined = currencyList.find(
+    const currencyToConvert: Currency | undefined = currencyList.find(
       (currency) => currency.code === (event.target.value as string)
     );
 
-    setCurrencyToConvert(currencyToConvertObj);
+    setCurrencyToConvert(currencyToConvert);
   };
 
-  const changeArsToConvert = (event: React.ChangeEvent<{ value: unknown }>) => {
+  const handleArsToConvertChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ) => {
     setArsToConvert(event.target.value as number);
+  };
+
+  const handleConvertedAmountChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ) => {
+    const convertedAmount = event.target.value as number;
+    
+    if (currencyToConvert && blueConvertionRate && blueConvertionRate.blue) {
+      const ars = convertToArs(
+        convertedAmount,
+        blueConvertionRate.blue.value_sell,
+        currencyToConvert.value
+      );
+
+      convertingToArs.current = true;
+      setArsToConvert(ars);
+    }
+
+    setConvertedAmount(convertedAmount);
   };
 
   return (
@@ -122,7 +158,7 @@ export default function Calculator() {
                 fullWidth
                 id="amountArs"
                 autoFocus
-                onChange={changeArsToConvert}
+                onChange={handleArsToConvertChange}
                 value={arsToConvert}
               />
               <FormHelperText>
@@ -133,7 +169,7 @@ export default function Calculator() {
               <Select
                 id="demo-simple-select"
                 value={"ARS"}
-                onChange={changeCurrencyToConvert}
+                onChange={handleCurrencyToConvertChange}
                 variant="outlined"
                 disabled
               >
@@ -148,6 +184,7 @@ export default function Calculator() {
                 fullWidth
                 id="destination-amount"
                 value={convertedAmount}
+                onChange={handleConvertedAmountChange}
               />
             </Grid>
             <Grid item xs={6} sm={6}>
@@ -155,7 +192,7 @@ export default function Calculator() {
                 labelId="currency-label"
                 id="demo-simple-select"
                 value={currencyToConvert ? currencyToConvert.code : ""}
-                onChange={changeCurrencyToConvert}
+                onChange={handleCurrencyToConvertChange}
                 variant="outlined"
               >
                 {currencyList.map((currency: Currency) => (
@@ -172,3 +209,16 @@ export default function Calculator() {
     </Container>
   );
 }
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(8),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  form: {
+    width: "100%",
+    marginTop: theme.spacing(3),
+  },
+}));
