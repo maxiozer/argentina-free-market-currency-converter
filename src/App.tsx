@@ -230,5 +230,6 @@ const useStyles = makeStyles((theme) => ({
     minWidth: "calc(100%)",
     maxWidth: "calc(100%)",
     borderRadius: "4px",
+    opacity: 0.5
   },
 }));
