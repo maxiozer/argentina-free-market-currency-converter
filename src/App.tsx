@@ -16,30 +16,21 @@ import {
 import { BluelyticsResponse, CurrenciesResponse, Currency } from "./types";
 import meme from "./meme.jpg";
 
-const requestBlueConvertionRate = (
-  setBlueConvertionDate: React.Dispatch<
-    React.SetStateAction<BluelyticsResponse>
-  >
-): void => {
-  axios
-    .get<BluelyticsResponse>("https://api.bluelytics.com.ar/v2/latest")
-    .then((rta) => {
-      setBlueConvertionDate(rta.data);
-    });
+const fetchBlueConvertionRate = async () => {
+  const { data } = await axios.get<BluelyticsResponse>(
+    "https://api.bluelytics.com.ar/v2/latest"
+  );
+
+  return data;
 };
 
-const requestCurrencies = (setCurrencies: Function) => {
-  const currenciesToShow = ["USD", "ILS", "EUR", "AUS"];
-  axios
-    .get("https://api.bluelytics.com.ar/data/json/currency.json")
-    .then((rta) => {
-      const currencies = rta.data.filter((currency: any) =>
-        currenciesToShow.includes(currency.code)
-      );
-      setCurrencies(currencies);
-    });
-};
+const fetchCurrencies = async () => {
+  const { data } = await axios.get(
+    "https://api.bluelytics.com.ar/data/json/currency.json"
+  );
 
+  return data;
+};
 const convertFromArs = (
   arsToConvert: number,
   usdBlueValue: number,
@@ -71,15 +62,25 @@ export default function App() {
     useState<BluelyticsResponse>({});
 
   useEffect(() => {
-    requestBlueConvertionRate(setBlueConvertionRate);
-    requestCurrencies((currencyList: any) => {
+    const fetchData = async () => {
+      const currenciesToShow = ["USD", "ILS", "EUR", "AUS"];
+      setBlueConvertionRate(await fetchBlueConvertionRate());
+
+      const currencyData = await fetchCurrencies();
+      const currencyList = currencyData.filter((currency: any) =>
+        currenciesToShow.includes(currency.code)
+      );
+
       setCurrencyList(currencyList);
-      const currencyToConvertObj: Currency | undefined = currencyList.find(
+
+      const defaultCurrencyToConvert: Currency | undefined = currencyList.find(
         (currency: Currency) => currency.code === "ILS"
       );
 
-      setCurrencyToConvert(currencyToConvertObj);
-    });
+      setCurrencyToConvert(defaultCurrencyToConvert);
+    };
+
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -230,6 +231,6 @@ const useStyles = makeStyles((theme) => ({
     minWidth: "calc(100%)",
     maxWidth: "calc(100%)",
     borderRadius: "4px",
-    opacity: 0.5
+    opacity: 0.5,
   },
 }));
