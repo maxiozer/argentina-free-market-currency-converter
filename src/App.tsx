@@ -15,7 +15,7 @@ import {
   FormHelperText,
 } from "@material-ui/core";
 import { BluelyticsResponse, CurrenciesResponse, Currency } from "./types";
-
+import meme from "./meme.jpg";
 const requestBlueConvertionRate = (
   setBlueConvertionDate: React.Dispatch<
     React.SetStateAction<BluelyticsResponse>
@@ -119,7 +119,7 @@ export default function App() {
     event: React.ChangeEvent<{ value: unknown }>
   ) => {
     const convertedAmount = event.target.value as number;
-    
+
     if (currencyToConvert && blueConvertionRate && blueConvertionRate.blue) {
       const ars = convertToArs(
         convertedAmount,
@@ -145,7 +145,10 @@ export default function App() {
       <Toolbar />
       <div className={classes.paper}>
         <Typography component="h1" variant="h6">
-          Converti pesos a cualquier divisa usando la cotizacion paralela.
+          USD Compra: {blueConvertionRate.blue?.value_buy} ARS
+        </Typography>
+        <Typography component="h1" variant="h6">
+          USD Venta: {blueConvertionRate.blue?.value_sell} ARS
         </Typography>
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
@@ -154,26 +157,22 @@ export default function App() {
                 type="number"
                 autoComplete="ARS"
                 variant="outlined"
-                required
                 fullWidth
-                id="amountArs"
                 autoFocus
                 onChange={handleArsToConvertChange}
                 value={arsToConvert}
               />
-              <FormHelperText>
-                1 USD BLUE = {blueConvertionRate.blue?.value_sell} ARS
-              </FormHelperText>
             </Grid>
             <Grid item xs={6} sm={6}>
               <Select
                 id="demo-simple-select"
+                className={classes.select}
                 value={"ARS"}
                 onChange={handleCurrencyToConvertChange}
                 variant="outlined"
                 disabled
               >
-                <MenuItem value={"ARS"}>Pesos Argentinos (ARS)</MenuItem>
+                <MenuItem value={"ARS"}>Pesos Argentinos</MenuItem>
               </Select>
             </Grid>
             <Grid item xs={6} sm={6}>
@@ -181,7 +180,6 @@ export default function App() {
                 type="number"
                 variant="outlined"
                 required
-                fullWidth
                 id="destination-amount"
                 value={convertedAmount}
                 onChange={handleConvertedAmountChange}
@@ -189,18 +187,21 @@ export default function App() {
             </Grid>
             <Grid item xs={6} sm={6}>
               <Select
+                className={classes.select}
                 labelId="currency-label"
-                id="demo-simple-select"
                 value={currencyToConvert ? currencyToConvert.code : ""}
                 onChange={handleCurrencyToConvertChange}
                 variant="outlined"
               >
                 {currencyList.map((currency: Currency) => (
                   <MenuItem key={currency.code} value={currency.code}>
-                    {currency.name} ({currency.code})
+                    {currency.name}
                   </MenuItem>
                 ))}
               </Select>
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <img className={classes.img} src={meme} alt="meme"></img>
             </Grid>
           </Grid>
         </form>
@@ -212,7 +213,7 @@ export default function App() {
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(2),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -220,5 +221,14 @@ const useStyles = makeStyles((theme) => ({
   form: {
     width: "100%",
     marginTop: theme.spacing(3),
+  },
+  select: {
+    minWidth: "calc(100%)",
+    maxWidth: "calc(100%)",
+  },
+  img: {
+    minWidth: "calc(100%)",
+    maxWidth: "calc(100%)",
+    borderRadius: "4px",
   },
 }));
