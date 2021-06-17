@@ -12,10 +12,10 @@ import {
   CssBaseline,
   AppBar,
   Toolbar,
-  FormHelperText,
 } from "@material-ui/core";
 import { BluelyticsResponse, CurrenciesResponse, Currency } from "./types";
 import meme from "./meme.jpg";
+
 const requestBlueConvertionRate = (
   setBlueConvertionDate: React.Dispatch<
     React.SetStateAction<BluelyticsResponse>
