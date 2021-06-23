@@ -8,4 +8,6 @@ export interface Currency {
   value: number;
 }
 
-export type CurrenciesResponse = Currency[];
+export type Currencies = Currency[];
+
+export type KeyValObject = { [key: string]: any };

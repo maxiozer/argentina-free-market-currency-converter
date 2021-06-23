@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import axios from "axios";
 import {
   Container,
   Typography,
@@ -13,43 +12,15 @@ import {
   AppBar,
   Toolbar,
 } from "@material-ui/core";
-import { BluelyticsResponse, CurrenciesResponse, Currency } from "./types";
+import { BluelyticsResponse, Currencies, Currency } from "./types";
 import meme from "./meme.jpg";
-
-const fetchBlueConvertionRate = async () => {
-  const { data } = await axios.get<BluelyticsResponse>(
-    "https://api.bluelytics.com.ar/v2/latest"
-  );
-
-  return data;
-};
-
-const fetchCurrencies = async () => {
-  const { data } = await axios.get(
-    "https://api.bluelytics.com.ar/data/json/currency.json"
-  );
-
-  return data;
-};
-const convertFromArs = (
-  arsToConvert: number,
-  usdBlueValue: number,
-  currencyToConvertValue: number
-): number => {
-  const convertedInUsd = arsToConvert / usdBlueValue;
-  const convertedAmount = convertedInUsd * currencyToConvertValue;
-  return Math.round(convertedAmount * 100) / 100;
-};
-
-const convertToArs = (
-  valueToConvert: number,
-  usdBlueValue: number,
-  currencyToConvertValue: number
-): number => {
-  const convertedInUsd = valueToConvert / currencyToConvertValue;
-  const convertedAmount = convertedInUsd * usdBlueValue;
-  return Math.round(convertedAmount * 100) / 100;
-};
+import {
+  fetchBlueConvertionRate,
+  fetchCurrencies,
+  convertFromArs,
+  convertToArs,
+  createCurrencyList,
+} from "./common";
 
 export default function App() {
   const classes = useStyles();
@@ -57,26 +28,25 @@ export default function App() {
   const [arsToConvert, setArsToConvert] = useState(1);
   const [convertedAmount, setConvertedAmount] = useState(0);
   const [currencyToConvert, setCurrencyToConvert] = useState<Currency>();
-  const [currencyList, setCurrencyList] = useState<CurrenciesResponse>([]);
+  const [currencyList, setCurrencyList] = useState<Currencies>([]);
   const [blueConvertionRate, setBlueConvertionRate] =
     useState<BluelyticsResponse>({});
 
+  const ref = useRef(null); //wrong implemented?
+
   useEffect(() => {
     const fetchData = async () => {
-      const currenciesToShow = ["USD", "ILS", "EUR", "AUS"];
-      setBlueConvertionRate(await fetchBlueConvertionRate());
+      const blueConvertionRate = await fetchBlueConvertionRate();
+      setBlueConvertionRate(blueConvertionRate);
 
-      const currencyData = await fetchCurrencies();
-      const currencyList = currencyData.filter((currency: any) =>
-        currenciesToShow.includes(currency.code)
-      );
+      const fetchedCurrencies = await fetchCurrencies();
 
+      const currencyList = createCurrencyList(fetchedCurrencies);
       setCurrencyList(currencyList);
 
       const defaultCurrencyToConvert: Currency | undefined = currencyList.find(
         (currency: Currency) => currency.code === "ILS"
       );
-
       setCurrencyToConvert(defaultCurrencyToConvert);
     };
 
@@ -93,7 +63,7 @@ export default function App() {
     ) {
       const convertedAmount = convertFromArs(
         arsToConvert,
-        blueConvertionRate.blue.value_sell,
+        blueConvertionRate.blue.value_buy,
         currencyToConvert.value
       );
       setConvertedAmount(convertedAmount);
@@ -195,7 +165,7 @@ export default function App() {
                 variant="outlined"
               >
                 {currencyList.map((currency: Currency) => (
-                  <MenuItem key={currency.code} value={currency.code}>
+                  <MenuItem ref={ref} key={currency.code} value={currency.code}>
                     {currency.name}
                   </MenuItem>
                 ))}
