@@ -106,6 +106,8 @@ export default function App() {
     setConvertedAmount(convertedAmount);
   };
 
+  const updateDate = new Date();
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -122,6 +124,16 @@ export default function App() {
         </Typography>
         <Typography component="h1" variant="h6">
           USD Venta: {blueConvertionRate.blue?.value_sell} ARS
+        </Typography>
+        <Typography variant="subtitle1">
+          Ultima actualizacion:{" "}
+          {updateDate.toLocaleDateString("es-AR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
         </Typography>
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
