@@ -35,7 +35,7 @@ export default function App() {
     useState<BluelyticsResponse>({});
 
   useEffect(() => {
-    const fetchData = async () => {
+    const initApp = async () => {
       const blueConvertionRate = await fetchBlueConvertionRate();
       setBlueConvertionRate(blueConvertionRate);
 
@@ -49,9 +49,12 @@ export default function App() {
       );
       setCurrencyToConvert(defaultCurrencyToConvert);
       setLoading(false);
+
+      if (blueConvertionRate && blueConvertionRate.blue)
+        setArsToConvert(blueConvertionRate.blue?.value_sell);
     };
 
-    fetchData();
+    initApp();
   }, []);
 
   useEffect(() => {
@@ -127,13 +130,14 @@ export default function App() {
         </Typography>
         <Typography variant="subtitle1">
           Ultima actualizacion:{" "}
-          {updateDate.toLocaleDateString("es-AR", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
+          {!loading &&
+            updateDate.toLocaleDateString("es-AR", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
         </Typography>
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
