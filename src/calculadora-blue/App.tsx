@@ -32,8 +32,6 @@ export default function App() {
   const [blueConvertionRate, setBlueConvertionRate] =
     useState<BluelyticsResponse>({});
 
-  const ref = useRef(null); //wrong implemented?
-
   useEffect(() => {
     const fetchData = async () => {
       const blueConvertionRate = await fetchBlueConvertionRate();
@@ -165,7 +163,7 @@ export default function App() {
                 variant="outlined"
               >
                 {currencyList.map((currency: Currency) => (
-                  <MenuItem ref={ref} key={currency.code} value={currency.code}>
+                  <MenuItem key={currency.code} value={currency.code}>
                     {currency.name}
                   </MenuItem>
                 ))}
