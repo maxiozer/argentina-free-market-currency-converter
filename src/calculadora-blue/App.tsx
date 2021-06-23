@@ -12,6 +12,7 @@ import {
   AppBar,
   Toolbar,
   LinearProgress,
+  CircularProgress,
 } from "@material-ui/core";
 import { BluelyticsResponse, Currencies, Currency } from "./types";
 import meme from "./meme.jpg";
@@ -121,80 +122,98 @@ export default function App() {
         {loading && <LinearProgress />}
       </AppBar>
       <Toolbar />
-      <div className={classes.paper}>
-        <Typography component="h1" variant="h6">
-          USD Compra: {blueConvertionRate.blue?.value_buy} ARS
-        </Typography>
-        <Typography component="h1" variant="h6">
-          USD Venta: {blueConvertionRate.blue?.value_sell} ARS
-        </Typography>
-        <Typography variant="subtitle1">
-          Ultima actualizacion:{" "}
-          {!loading &&
-            updateDate.toLocaleDateString("es-AR", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-        </Typography>
-        <form className={classes.form} noValidate>
-          <Grid container spacing={2}>
-            <Grid item xs={6} sm={6}>
-              <TextField
-                type="number"
-                autoComplete="ARS"
-                variant="outlined"
-                fullWidth
-                autoFocus
-                onChange={handleArsToConvertChange}
-                value={arsToConvert}
-              />
-            </Grid>
-            <Grid item xs={6} sm={6}>
-              <Select
-                id="demo-simple-select"
-                className={classes.select}
-                value={"ARS"}
-                onChange={handleCurrencyToConvertChange}
-                variant="outlined"
-                disabled
-              >
-                <MenuItem value={"ARS"}>Pesos Argentinos</MenuItem>
-              </Select>
-            </Grid>
-            <Grid item xs={6} sm={6}>
-              <TextField
-                type="number"
-                variant="outlined"
-                required
-                id="destination-amount"
-                value={convertedAmount}
-                onChange={handleConvertedAmountChange}
-              />
-            </Grid>
-            <Grid item xs={6} sm={6}>
-              <Select
-                className={classes.select}
-                labelId="currency-label"
-                value={currencyToConvert ? currencyToConvert.code : ""}
-                onChange={handleCurrencyToConvertChange}
-                variant="outlined"
-              >
-                {currencyList.map((currency: Currency) => (
-                  <MenuItem key={currency.code} value={currency.code}>
-                    {currency.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <img className={classes.img} src={meme} alt="meme"></img>
+      {loading && (
+        <div className={classes.paper}>
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justify="center"
+            style={{ minHeight: "100vh" }}
+          >
+            <Grid item xs={3}>
+              <CircularProgress />
             </Grid>
           </Grid>
-        </form>
-      </div>
+        </div>
+      )}
+      {!loading && (
+        <div className={classes.paper}>
+          <Typography component="h1" variant="h6">
+            USD Compra: {blueConvertionRate.blue?.value_buy} ARS
+          </Typography>
+          <Typography component="h1" variant="h6">
+            USD Venta: {blueConvertionRate.blue?.value_sell} ARS
+          </Typography>
+          <Typography variant="subtitle1">
+            Ultima actualizacion:{" "}
+            {!loading &&
+              updateDate.toLocaleDateString("es-AR", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+          </Typography>
+          <form className={classes.form} noValidate>
+            <Grid container spacing={2}>
+              <Grid item xs={6} sm={6}>
+                <TextField
+                  type="number"
+                  autoComplete="ARS"
+                  variant="outlined"
+                  fullWidth
+                  autoFocus
+                  onChange={handleArsToConvertChange}
+                  value={arsToConvert}
+                />
+              </Grid>
+              <Grid item xs={6} sm={6}>
+                <Select
+                  id="demo-simple-select"
+                  className={classes.select}
+                  value={"ARS"}
+                  onChange={handleCurrencyToConvertChange}
+                  variant="outlined"
+                  disabled
+                >
+                  <MenuItem value={"ARS"}>Pesos Argentinos</MenuItem>
+                </Select>
+              </Grid>
+              <Grid item xs={6} sm={6}>
+                <TextField
+                  type="number"
+                  variant="outlined"
+                  required
+                  id="destination-amount"
+                  value={convertedAmount}
+                  onChange={handleConvertedAmountChange}
+                />
+              </Grid>
+              <Grid item xs={6} sm={6}>
+                <Select
+                  className={classes.select}
+                  labelId="currency-label"
+                  value={currencyToConvert ? currencyToConvert.code : ""}
+                  onChange={handleCurrencyToConvertChange}
+                  variant="outlined"
+                >
+                  {currencyList.map((currency: Currency) => (
+                    <MenuItem key={currency.code} value={currency.code}>
+                      {currency.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Grid>
+              <Grid item xs={12} sm={12}>
+                <img className={classes.img} src={meme} alt="meme"></img>
+              </Grid>
+            </Grid>
+          </form>
+        </div>
+      )}
       <Box mt={5}></Box>
     </Container>
   );
