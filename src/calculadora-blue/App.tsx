@@ -11,6 +11,7 @@ import {
   CssBaseline,
   AppBar,
   Toolbar,
+  LinearProgress,
 } from "@material-ui/core";
 import { BluelyticsResponse, Currencies, Currency } from "./types";
 import meme from "./meme.jpg";
@@ -26,6 +27,7 @@ export default function App() {
   const classes = useStyles();
   const convertingToArs = useRef(false);
   const [arsToConvert, setArsToConvert] = useState(1);
+  const [loading, setLoading] = useState(true);
   const [convertedAmount, setConvertedAmount] = useState(0);
   const [currencyToConvert, setCurrencyToConvert] = useState<Currency>();
   const [currencyList, setCurrencyList] = useState<Currencies>([]);
@@ -46,6 +48,7 @@ export default function App() {
         (currency: Currency) => currency.code === "ILS"
       );
       setCurrencyToConvert(defaultCurrencyToConvert);
+      setLoading(false);
     };
 
     fetchData();
@@ -110,6 +113,7 @@ export default function App() {
         <Toolbar>
           <Typography variant="h6">Calculadora Blue</Typography>
         </Toolbar>
+        {loading && <LinearProgress />}
       </AppBar>
       <Toolbar />
       <div className={classes.paper}>
