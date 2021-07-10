@@ -1,13 +1,28 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import App from "./calculadora-blue/App";
+import CalculadoraBlue from "./calculadora-blue/CalculadoraBlue";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core";
+
+const appThemeOptions = {
+  props: {
+    MuiTextField: {
+      variant: "outlined" as "outlined",
+    },
+    MuiSelect: {
+      variant: "outlined" as "outlined",
+    },
+  },
+};
+const appTheme = createMuiTheme(appThemeOptions);
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider theme={appTheme}>
+      <CalculadoraBlue />
+    </ThemeProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

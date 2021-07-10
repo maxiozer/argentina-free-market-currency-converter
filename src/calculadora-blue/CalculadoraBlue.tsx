@@ -1,21 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Container,
-  Typography,
-  Box,
   Grid,
   MenuItem,
   Select,
   TextField,
   CssBaseline,
-  AppBar,
   Toolbar,
-  LinearProgress,
-  CircularProgress,
 } from "@material-ui/core";
 import { BluelyticsResponse, Currencies, Currency } from "./types";
-import meme from "./meme.jpg";
+import meme from "./images/meme.jpg";
 import {
   fetchBlueConvertionRate,
   fetchCurrencies,
@@ -24,48 +19,49 @@ import {
   createCurrencyList,
 } from "./common";
 
-export default function App() {
+import Header from "./components/Header";
+import CurrencyValues from "./components/CurrencyValue";
+import LastUpdate from "./components/LastUpdate";
+import LoadingForm from "./components/LoadingForm";
+
+export default function CalculadoraBlue() {
   const classes = useStyles();
-  const convertingToArs = useRef(false);
+  const isConvertingToArs = useRef(false);
   const [arsToConvert, setArsToConvert] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [convertedAmount, setConvertedAmount] = useState(0);
   const [currencyToConvert, setCurrencyToConvert] = useState<Currency>();
   const [currencyList, setCurrencyList] = useState<Currencies>([]);
   const [blueConvertionRate, setBlueConvertionRate] =
     useState<BluelyticsResponse>({});
 
+  const componentMount = async () => {
+    const blueConvertionRate = await fetchBlueConvertionRate();
+    setBlueConvertionRate(blueConvertionRate);
+
+    const fetchedCurrencies = await fetchCurrencies();
+
+    const currencyList = createCurrencyList(fetchedCurrencies);
+    setCurrencyList(currencyList);
+
+    const defaultCurrencyToConvert: Currency | undefined = currencyList.find(
+      (currency: Currency) => currency.code === "ILS"
+    );
+    setCurrencyToConvert(defaultCurrencyToConvert);
+    setIsLoading(false);
+
+    if (blueConvertionRate && blueConvertionRate.blue)
+      setArsToConvert(blueConvertionRate.blue?.value_sell);
+  };
+
   useEffect(() => {
-    const initApp = async () => {
-      const blueConvertionRate = await fetchBlueConvertionRate();
-      setBlueConvertionRate(blueConvertionRate);
-
-      const fetchedCurrencies = await fetchCurrencies();
-
-      const currencyList = createCurrencyList(fetchedCurrencies);
-      setCurrencyList(currencyList);
-
-      const defaultCurrencyToConvert: Currency | undefined = currencyList.find(
-        (currency: Currency) => currency.code === "ILS"
-      );
-      setCurrencyToConvert(defaultCurrencyToConvert);
-      setLoading(false);
-
-      if (blueConvertionRate && blueConvertionRate.blue)
-        setArsToConvert(blueConvertionRate.blue?.value_sell);
-    };
-
-    initApp();
+    componentMount();
   }, []);
 
   useEffect(() => {
-    if (convertingToArs.current) {
-      convertingToArs.current = false;
-    } else if (
-      currencyToConvert &&
-      blueConvertionRate &&
-      blueConvertionRate.blue
-    ) {
+    if (isConvertingToArs.current) {
+      isConvertingToArs.current = false;
+    } else if (currencyToConvert && blueConvertionRate.blue) {
       const convertedAmount = convertFromArs(
         arsToConvert,
         blueConvertionRate.blue.value_buy,
@@ -96,98 +92,49 @@ export default function App() {
   ) => {
     const convertedAmount = event.target.value as number;
 
-    if (currencyToConvert && blueConvertionRate && blueConvertionRate.blue) {
+    if (currencyToConvert && blueConvertionRate.blue) {
       const ars = convertToArs(
         convertedAmount,
         blueConvertionRate.blue.value_sell,
         currencyToConvert.value
       );
 
-      convertingToArs.current = true;
+      isConvertingToArs.current = true;
       setArsToConvert(ars);
     }
 
     setConvertedAmount(convertedAmount);
   };
 
-  const updateDate = new Date();
-
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      <AppBar position="fixed">
-        <Toolbar>
-          <Typography variant="h6">Calculadora Blue</Typography>
-        </Toolbar>
-        {loading && <LinearProgress />}
-      </AppBar>
+      <Header isLoading={isLoading}></Header>
       <Toolbar />
-      {loading && (
-        <div className={classes.paper}>
-          <Grid
-            container
-            spacing={0}
-            direction="column"
-            alignItems="center"
-            justify="center"
-            style={{ minHeight: "100vh" }}
-          >
-            <Grid item xs={3}>
-              <CircularProgress />
-            </Grid>
-          </Grid>
-        </div>
-      )}
-      {!loading && (
-        <div className={classes.paper}>
-          <Typography component="h1" variant="h6">
-            USD Compra: {blueConvertionRate.blue?.value_buy} ARS
-          </Typography>
-          <Typography component="h1" variant="h6">
-            USD Venta: {blueConvertionRate.blue?.value_sell} ARS
-          </Typography>
-          <Typography variant="subtitle1">
-            Ultima actualizacion:{" "}
-            {!loading &&
-              updateDate.toLocaleDateString("es-AR", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-          </Typography>
-          <form className={classes.form} noValidate>
+      <div className={classes.paper}>
+        {isLoading ? (
+          <LoadingForm />
+        ) : (
+          <Fragment>
+            <CurrencyValues blueConvertionRate={blueConvertionRate} />
+            <LastUpdate />
             <Grid container spacing={2}>
               <Grid item xs={6} sm={6}>
                 <TextField
                   type="number"
-                  autoComplete="ARS"
-                  variant="outlined"
-                  fullWidth
                   autoFocus
                   onChange={handleArsToConvertChange}
                   value={arsToConvert}
                 />
               </Grid>
               <Grid item xs={6} sm={6}>
-                <Select
-                  id="demo-simple-select"
-                  className={classes.select}
-                  value={"ARS"}
-                  onChange={handleCurrencyToConvertChange}
-                  variant="outlined"
-                  disabled
-                >
+                <Select className={classes.select} value={"ARS"} disabled>
                   <MenuItem value={"ARS"}>Pesos Argentinos</MenuItem>
                 </Select>
               </Grid>
               <Grid item xs={6} sm={6}>
                 <TextField
                   type="number"
-                  variant="outlined"
-                  required
-                  id="destination-amount"
                   value={convertedAmount}
                   onChange={handleConvertedAmountChange}
                 />
@@ -195,10 +142,8 @@ export default function App() {
               <Grid item xs={6} sm={6}>
                 <Select
                   className={classes.select}
-                  labelId="currency-label"
                   value={currencyToConvert ? currencyToConvert.code : ""}
                   onChange={handleCurrencyToConvertChange}
-                  variant="outlined"
                 >
                   {currencyList.map((currency: Currency) => (
                     <MenuItem key={currency.code} value={currency.code}>
@@ -211,10 +156,9 @@ export default function App() {
                 <img className={classes.img} src={meme} alt="meme"></img>
               </Grid>
             </Grid>
-          </form>
-        </div>
-      )}
-      <Box mt={5}></Box>
+          </Fragment>
+        )}
+      </div>
     </Container>
   );
 }
@@ -225,10 +169,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-  },
-  form: {
-    width: "100%",
-    marginTop: theme.spacing(3),
   },
   select: {
     minWidth: "calc(100%)",
