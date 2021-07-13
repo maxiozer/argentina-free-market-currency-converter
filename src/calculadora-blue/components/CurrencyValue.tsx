@@ -6,10 +6,10 @@ export default function CurrencyValues(props: CurrencyValuesProps) {
   return (
     <React.Fragment>
       <Typography component="h1" variant="h6">
-        USD Compra: {props.blueConvertionRate.blue?.value_buy} ARS
+        USD Blue Compra: {props.blueConvertionRate.blue?.value_buy} ARS
       </Typography>
       <Typography component="h1" variant="h6">
-        USD Venta: {props.blueConvertionRate.blue?.value_sell} ARS
+        USD Blue Venta: {props.blueConvertionRate.blue?.value_sell} ARS
       </Typography>
     </React.Fragment>
   );

@@ -9,20 +9,27 @@ import {
   CssBaseline,
   Toolbar,
 } from "@material-ui/core";
-import { BluelyticsResponse, Currencies, Currency } from "./types";
-import meme from "./images/meme.jpg";
+import {
+  BluelyticsResponse,
+  Currencies,
+  Currency,
+  EvolutionChartData,
+} from "./types";
 import {
   fetchBlueConvertionRate,
   fetchCurrencies,
   convertFromArs,
   convertToArs,
   createCurrencyList,
+  fetchEvolution,
+  generateEvolutionChartData,
 } from "./common";
 
 import Header from "./components/Header";
 import CurrencyValues from "./components/CurrencyValue";
 import LastUpdate from "./components/LastUpdate";
 import LoadingForm from "./components/LoadingForm";
+import EvolutionChart from "./components/EvolutionChart";
 
 export default function CalculadoraBlue() {
   const classes = useStyles();
@@ -32,6 +39,9 @@ export default function CalculadoraBlue() {
   const [convertedAmount, setConvertedAmount] = useState(0);
   const [currencyToConvert, setCurrencyToConvert] = useState<Currency>();
   const [currencyList, setCurrencyList] = useState<Currencies>([]);
+  const [evolutionChart, setEvolutionChart] = useState<EvolutionChartData[]>(
+    []
+  );
   const [blueConvertionRate, setBlueConvertionRate] =
     useState<BluelyticsResponse>({});
 
@@ -48,10 +58,16 @@ export default function CalculadoraBlue() {
       (currency: Currency) => currency.code === "ILS"
     );
     setCurrencyToConvert(defaultCurrencyToConvert);
-    setIsLoading(false);
 
     if (blueConvertionRate && blueConvertionRate.blue)
       setArsToConvert(blueConvertionRate.blue?.value_sell);
+
+    const evolution = await fetchEvolution();
+
+    setIsLoading(false);
+
+    const evolutionChart = generateEvolutionChartData(evolution);
+    setEvolutionChart(evolutionChart);
   };
 
   useEffect(() => {
@@ -153,7 +169,7 @@ export default function CalculadoraBlue() {
                 </Select>
               </Grid>
               <Grid item xs={12} sm={12}>
-                <img className={classes.img} src={meme} alt="meme"></img>
+                <EvolutionChart data={evolutionChart} />
               </Grid>
             </Grid>
           </Fragment>
@@ -173,11 +189,5 @@ const useStyles = makeStyles((theme) => ({
   select: {
     minWidth: "calc(100%)",
     maxWidth: "calc(100%)",
-  },
-  img: {
-    minWidth: "calc(100%)",
-    maxWidth: "calc(100%)",
-    borderRadius: "4px",
-    opacity: 0.5,
   },
 }));

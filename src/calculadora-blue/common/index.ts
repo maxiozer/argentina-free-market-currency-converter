@@ -1,5 +1,11 @@
 import axios from "axios";
-import { BluelyticsResponse, Currencies, KeyValObject } from "../types";
+import {
+  BluelyticsResponse,
+  Currencies,
+  KeyValObject,
+  EvolutionResponse,
+  EvolutionChartData,
+} from "../types";
 import { AVAIABLE_CURRENCIES } from "../constants";
 
 export const fetchBlueConvertionRate = async () => {
@@ -16,6 +22,14 @@ export const fetchCurrencies = async () => {
   );
 
   return data.rates;
+};
+
+export const fetchEvolution = async () => {
+  const { data } = await axios.get<EvolutionResponse[]>(
+    "https://api.bluelytics.com.ar/v2/evolution.json"
+  );
+
+  return data;
 };
 
 export const convertFromArs = (
@@ -38,9 +52,7 @@ export const convertToArs = (
   return Math.round(convertedAmount * 100) / 100;
 };
 
-export const createCurrencyList = (
-  fetchedCurrencies: KeyValObject
-) => {
+export const createCurrencyList = (fetchedCurrencies: KeyValObject) => {
   const avaiableCurrencies = Object.keys(AVAIABLE_CURRENCIES).filter(
     (avaiableCurrency) => avaiableCurrency in fetchedCurrencies
   );
@@ -56,4 +68,47 @@ export const createCurrencyList = (
   );
 
   return currencyList;
+};
+
+export const generateEvolutionChartData = (
+  data: EvolutionResponse[]
+): EvolutionChartData[] => {
+  const currentYear = new Date().getFullYear();
+  const emptyChartByYear = {
+    oficial: { sum: 0, count: 0 },
+    blue: { sum: 0, count: 0 },
+  };
+
+  const chartByYear = data.reduce<{
+    [key: number]: typeof emptyChartByYear;
+  }>((retData, data) => {
+    const year = new Date(data.date).getFullYear();
+    const retYear = retData[year] || { ...emptyChartByYear };
+
+    if (data.source === "Oficial")
+      retYear.oficial = {
+        sum: retYear.oficial.sum + data.value_sell,
+        count: retYear.oficial.count + 1,
+      };
+    else
+      retYear.blue = {
+        sum: retYear.blue.sum + data.value_sell,
+        count: retYear.blue.count + 1,
+      };
+
+    retData[year] = retYear;
+    return retData;
+  }, {});
+
+  return Object.keys(chartByYear)
+    .filter((year: string) => Number(year) >= currentYear - 7)
+    .map((year: string) => {
+      const yearInt = Number(year);
+      return {
+        year,
+        oficial:
+          chartByYear[yearInt].oficial.sum / chartByYear[yearInt].oficial.count,
+        blue: chartByYear[yearInt].blue.sum / chartByYear[yearInt].blue.count,
+      };
+    });
 };
