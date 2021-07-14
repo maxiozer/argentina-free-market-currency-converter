@@ -31,6 +31,8 @@ import LastUpdate from "./components/LastUpdate";
 import LoadingForm from "./components/LoadingForm";
 import EvolutionChart from "./components/EvolutionChart";
 
+import firebase from "firebase/app";
+
 export default function CalculadoraBlue() {
   const classes = useStyles();
   const isConvertingToArs = useRef(false);
@@ -94,12 +96,20 @@ export default function CalculadoraBlue() {
       (currency) => currency.code === (event.target.value as string)
     );
 
+    firebase.analytics().logEvent("Currency_to_convert_change", {
+      currency: event.target.value,
+    });
+
     setCurrencyToConvert(currencyToConvert);
   };
 
   const handleArsToConvertChange = (
     event: React.ChangeEvent<{ value: unknown }>
   ) => {
+    firebase
+      .analytics()
+      .logEvent("covert_from_ars", { value: event.target.value });
+
     setArsToConvert(event.target.value as number);
   };
 
@@ -114,6 +124,10 @@ export default function CalculadoraBlue() {
         blueConvertionRate.blue.value_sell,
         currencyToConvert.value
       );
+
+      firebase
+        .analytics()
+        .logEvent("covert_to_ars", { value: event.target.value });
 
       isConvertingToArs.current = true;
       setArsToConvert(ars);
