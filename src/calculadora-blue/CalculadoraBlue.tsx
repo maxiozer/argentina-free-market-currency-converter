@@ -23,6 +23,7 @@ import {
   createCurrencyList,
   fetchEvolution,
   generateEvolutionChartData,
+  fetchLocationCurrency,
 } from "./common";
 
 import Header from "./components/Header";
@@ -56,8 +57,14 @@ export default function CalculadoraBlue() {
     const currencyList = createCurrencyList(fetchedCurrencies);
     setCurrencyList(currencyList);
 
+    const locationCurrency = await fetchLocationCurrency();
+    const defaultLocationCurrency =
+      !locationCurrency || locationCurrency === "ARS"
+        ? "USD"
+        : locationCurrency;
+
     const defaultCurrencyToConvert: Currency | undefined = currencyList.find(
-      (currency: Currency) => currency.code === "ILS"
+      (currency: Currency) => currency.code === defaultLocationCurrency
     );
     setCurrencyToConvert(defaultCurrencyToConvert);
 

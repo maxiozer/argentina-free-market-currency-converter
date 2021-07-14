@@ -8,6 +8,12 @@ import {
 } from "../types";
 import { AVAIABLE_CURRENCIES } from "../constants";
 
+export const fetchLocationCurrency = async () => {
+  const { data } = await axios.get("https://ipapi.co/currency/");
+
+  return data;
+};
+
 export const fetchBlueConvertionRate = async () => {
   const { data } = await axios.get<BluelyticsResponse>(
     "https://api.bluelytics.com.ar/v2/latest"
