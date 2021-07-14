@@ -1,5 +1,7 @@
 import { EvolutionChartData } from "../types";
 import Paper from "@material-ui/core/Paper";
+import { Grid, LinearProgress } from "@material-ui/core";
+
 import {
   ArgumentAxis,
   ValueAxis,
@@ -34,6 +36,7 @@ export default function EvolutionChart(props: EvolutionProps) {
         <Tooltip />
         <Legend position="bottom" />
         <Title text="Evolución anual" />
+        {props.isLoading && <LinearProgress color="secondary" />}
       </Chart>
     </Paper>
   );
@@ -41,4 +44,5 @@ export default function EvolutionChart(props: EvolutionProps) {
 
 interface EvolutionProps {
   data: EvolutionChartData[];
+  isLoading: boolean;
 }

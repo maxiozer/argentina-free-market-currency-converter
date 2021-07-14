@@ -42,6 +42,7 @@ export default function CalculadoraBlue() {
   const [convertedAmount, setConvertedAmount] = useState(0);
   const [currencyToConvert, setCurrencyToConvert] = useState<Currency>();
   const [currencyList, setCurrencyList] = useState<Currencies>([]);
+  const [isLoadingEvolutionChart, setIsLoadingEvolutionChart] = useState(true);
   const [evolutionChart, setEvolutionChart] = useState<EvolutionChartData[]>(
     []
   );
@@ -71,12 +72,13 @@ export default function CalculadoraBlue() {
     if (blueConvertionRate && blueConvertionRate.blue)
       setArsToConvert(blueConvertionRate.blue?.value_sell);
 
-    const evolution = await fetchEvolution();
-
     setIsLoading(false);
 
+    setIsLoadingEvolutionChart(true);
+    const evolution = await fetchEvolution();
     const evolutionChart = generateEvolutionChartData(evolution);
     setEvolutionChart(evolutionChart);
+    setIsLoadingEvolutionChart(false);
   };
 
   useEffect(() => {
@@ -190,7 +192,10 @@ export default function CalculadoraBlue() {
                 </Select>
               </Grid>
               <Grid item xs={12} sm={12}>
-                <EvolutionChart data={evolutionChart} />
+                <EvolutionChart
+                  data={evolutionChart}
+                  isLoading={isLoadingEvolutionChart}
+                />
               </Grid>
             </Grid>
           </Fragment>
