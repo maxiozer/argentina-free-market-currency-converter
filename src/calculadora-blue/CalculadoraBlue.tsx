@@ -34,6 +34,7 @@ import EvolutionChart from "./components/EvolutionChart";
 
 import firebase from "firebase/app";
 import axios from "axios";
+import PWAPrompt from "react-ios-pwa-prompt";
 
 export default function CalculadoraBlue() {
   const classes = useStyles();
@@ -164,6 +165,7 @@ export default function CalculadoraBlue() {
           <LoadingForm />
         ) : (
           <Fragment>
+            <PWAPrompt timesToShow={3} permanentlyHideOnDismiss={false} />
             <CurrencyValues blueConvertionRate={blueConvertionRate} />
             <LastUpdate />
             <Grid container spacing={2}>

@@ -1,3 +1,4 @@
+/// <reference path="declarations.d.ts"/>
 import React from "react";
 import ReactDOM from "react-dom";
 import firebase from "firebase/app";
