@@ -50,45 +50,44 @@ export default function CalculadoraBlue() {
   const [blueConvertionRate, setBlueConvertionRate] =
     useState<BluelyticsResponse>({});
 
-  const componentMount = async () => {
-    await axios
+  const componentMount = () => {
+    axios
       .all([
         fetchBlueConvertionRate(),
         fetchCurrencies(),
         fetchLocationCurrency(),
       ])
       .then(
-        axios.spread(function (
-          blueConvertionRate,
-          fetchedCurrencies,
-          locationCurrency
-        ) {
-          setBlueConvertionRate(blueConvertionRate);
-          const currencyList = createCurrencyList(fetchedCurrencies);
-          setCurrencyList(currencyList);
+        axios.spread(
+          (blueConvertionRate, fetchedCurrencies, locationCurrency) => {
+            setBlueConvertionRate(blueConvertionRate);
+            const currencyList = createCurrencyList(fetchedCurrencies);
+            setCurrencyList(currencyList);
 
-          const defaultLocationCurrency =
-            !locationCurrency || locationCurrency === "ARS"
-              ? "USD"
-              : locationCurrency;
+            const defaultLocationCurrency =
+              !locationCurrency || locationCurrency === "ARS"
+                ? "USD"
+                : locationCurrency;
 
-          const defaultCurrencyToConvert: Currency | undefined =
-            currencyList.find(
-              (currency: Currency) => currency.code === defaultLocationCurrency
-            );
-          setCurrencyToConvert(defaultCurrencyToConvert);
-          if (blueConvertionRate && blueConvertionRate.blue)
-            setArsToConvert(blueConvertionRate.blue?.value_sell);
+            const defaultCurrencyToConvert: Currency | undefined =
+              currencyList.find(
+                (currency: Currency) =>
+                  currency.code === defaultLocationCurrency
+              );
+            setCurrencyToConvert(defaultCurrencyToConvert);
+            if (blueConvertionRate && blueConvertionRate.blue)
+              setArsToConvert(blueConvertionRate.blue?.value_sell);
 
-          setIsLoading(false);
-        })
+            setIsLoading(false);
+          }
+        )
       );
 
-    setIsLoadingEvolutionChart(true);
-    const evolution = await fetchEvolution();
-    const evolutionChart = generateEvolutionChartData(evolution);
-    setEvolutionChart(evolutionChart);
-    setIsLoadingEvolutionChart(false);
+    fetchEvolution().then((evolution) => {
+      const evolutionChart = generateEvolutionChartData(evolution);
+      setEvolutionChart(evolutionChart);
+      setIsLoadingEvolutionChart(false);
+    });
   };
 
   useEffect(() => {
@@ -115,7 +114,7 @@ export default function CalculadoraBlue() {
       (currency) => currency.code === (event.target.value as string)
     );
 
-    firebase.analytics().logEvent("Currency_to_convert_change", {
+    firebase.analytics().logEvent("currency_to_convert_change", {
       currency: event.target.value,
     });
 
@@ -127,7 +126,7 @@ export default function CalculadoraBlue() {
   ) => {
     firebase
       .analytics()
-      .logEvent("covert_from_ars", { value: event.target.value });
+      .logEvent("covert_from_ars", { amount: event.target.value });
 
     setArsToConvert(event.target.value as number);
   };
@@ -146,7 +145,7 @@ export default function CalculadoraBlue() {
 
       firebase
         .analytics()
-        .logEvent("covert_to_ars", { value: event.target.value });
+        .logEvent("covert_to_ars", { amount: event.target.value });
 
       isConvertingToArs.current = true;
       setArsToConvert(ars);
