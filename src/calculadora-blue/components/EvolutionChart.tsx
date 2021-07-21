@@ -1,6 +1,6 @@
 import { EvolutionChartData } from "../types";
 import Paper from "@material-ui/core/Paper";
-import { Grid, LinearProgress } from "@material-ui/core";
+import { LinearProgress } from "@material-ui/core";
 
 import {
   ArgumentAxis,

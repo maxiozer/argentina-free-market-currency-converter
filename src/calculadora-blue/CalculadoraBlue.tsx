@@ -33,6 +33,7 @@ import LoadingForm from "./components/LoadingForm";
 import EvolutionChart from "./components/EvolutionChart";
 
 import firebase from "firebase/app";
+import axios from "axios";
 
 export default function CalculadoraBlue() {
   const classes = useStyles();
@@ -50,29 +51,38 @@ export default function CalculadoraBlue() {
     useState<BluelyticsResponse>({});
 
   const componentMount = async () => {
-    const blueConvertionRate = await fetchBlueConvertionRate();
-    setBlueConvertionRate(blueConvertionRate);
+    await axios
+      .all([
+        fetchBlueConvertionRate(),
+        fetchCurrencies(),
+        fetchLocationCurrency(),
+      ])
+      .then(
+        axios.spread(function (
+          blueConvertionRate,
+          fetchedCurrencies,
+          locationCurrency
+        ) {
+          setBlueConvertionRate(blueConvertionRate);
+          const currencyList = createCurrencyList(fetchedCurrencies);
+          setCurrencyList(currencyList);
 
-    const fetchedCurrencies = await fetchCurrencies();
+          const defaultLocationCurrency =
+            !locationCurrency || locationCurrency === "ARS"
+              ? "USD"
+              : locationCurrency;
 
-    const currencyList = createCurrencyList(fetchedCurrencies);
-    setCurrencyList(currencyList);
+          const defaultCurrencyToConvert: Currency | undefined =
+            currencyList.find(
+              (currency: Currency) => currency.code === defaultLocationCurrency
+            );
+          setCurrencyToConvert(defaultCurrencyToConvert);
+          if (blueConvertionRate && blueConvertionRate.blue)
+            setArsToConvert(blueConvertionRate.blue?.value_sell);
 
-    const locationCurrency = await fetchLocationCurrency();
-    const defaultLocationCurrency =
-      !locationCurrency || locationCurrency === "ARS"
-        ? "USD"
-        : locationCurrency;
-
-    const defaultCurrencyToConvert: Currency | undefined = currencyList.find(
-      (currency: Currency) => currency.code === defaultLocationCurrency
-    );
-    setCurrencyToConvert(defaultCurrencyToConvert);
-
-    if (blueConvertionRate && blueConvertionRate.blue)
-      setArsToConvert(blueConvertionRate.blue?.value_sell);
-
-    setIsLoading(false);
+          setIsLoading(false);
+        })
+      );
 
     setIsLoadingEvolutionChart(true);
     const evolution = await fetchEvolution();
