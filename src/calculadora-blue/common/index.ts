@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import {
   BluelyticsResponse,
   Currencies,
@@ -7,6 +7,7 @@ import {
   EvolutionChartData,
 } from "../types";
 import { AVAIABLE_CURRENCIES } from "../constants";
+import { blue } from "@material-ui/core/colors";
 
 export const fetchLocationCurrency = async () => {
   const { data } = await axios.get("https://ipapi.co/currency/");
@@ -15,11 +16,16 @@ export const fetchLocationCurrency = async () => {
 };
 
 export const fetchBlueConvertionRate = async () => {
-  const { data } = await axios.get<BluelyticsResponse>(
-    "https://api.bluelytics.com.ar/v2/latest"
-  );
+  const { data } = await axios.get("https://api.bluelytics.com.ar/v2/latest");
 
-  return data;
+  return {
+    ...data,
+    blue: {
+      ...blue,
+      value_sell: Math.round(data.blue.value_sell),
+      value_buy: Math.round(data.blue.value_buy),
+    },
+  };
 };
 
 export const fetchCurrencies = async () => {
@@ -112,9 +118,12 @@ export const generateEvolutionChartData = (
       const yearInt = Number(year);
       return {
         year,
-        oficial:
-          chartByYear[yearInt].oficial.sum / chartByYear[yearInt].oficial.count,
-        blue: chartByYear[yearInt].blue.sum / chartByYear[yearInt].blue.count,
+        oficial: Math.round(
+          chartByYear[yearInt].oficial.sum / chartByYear[yearInt].oficial.count
+        ),
+        blue: Math.round(
+          chartByYear[yearInt].blue.sum / chartByYear[yearInt].blue.count
+        ),
       };
     });
 };
