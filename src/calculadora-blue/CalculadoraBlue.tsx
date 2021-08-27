@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, Fragment } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  Fragment,
+  useCallback,
+} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Container,
@@ -51,48 +57,59 @@ export default function CalculadoraBlue() {
   const [blueConvertionRate, setBlueConvertionRate] =
     useState<BluelyticsResponse>({});
 
-  const componentMount = () => {
-    axios
-      .all([
-        fetchBlueConvertionRate(),
-        fetchCurrencies(),
-        fetchLocationCurrency(),
-      ])
-      .then(
-        axios.spread(
-          (blueConvertionRate, fetchedCurrencies, locationCurrency) => {
-            setBlueConvertionRate(blueConvertionRate);
-            const currencyList = createCurrencyList(fetchedCurrencies);
-            setCurrencyList(currencyList);
+  useEffect(() => {
+    const fetchBlueConvertionRatePromise = fetchBlueConvertionRate().then(
+      (blueConvertionRate) => {
+        setBlueConvertionRate(blueConvertionRate);
+        if (blueConvertionRate && blueConvertionRate.blue)
+          setArsToConvert(blueConvertionRate.blue?.value_sell);
+      }
+    );
 
+    const fetchCurrenciesPromise = fetchCurrencies()
+      .then((fetchedCurrencies) => {
+        const currencyList = createCurrencyList(fetchedCurrencies);
+        setCurrencyList(currencyList);
+
+        return currencyList;
+      })
+      .then((currencyList) => {
+        fetchLocationCurrency()
+          .then((fetchedLocationCurrency) => {
             const defaultLocationCurrency =
-              !locationCurrency || locationCurrency === "ARS"
+              !fetchedLocationCurrency || fetchedLocationCurrency === "ARS"
                 ? "USD"
-                : locationCurrency;
+                : fetchedLocationCurrency;
 
             const defaultCurrencyToConvert: Currency | undefined =
               currencyList.find(
                 (currency: Currency) =>
                   currency.code === defaultLocationCurrency
               );
-            setCurrencyToConvert(defaultCurrencyToConvert);
-            if (blueConvertionRate && blueConvertionRate.blue)
-              setArsToConvert(blueConvertionRate.blue?.value_sell);
+            console.log(defaultLocationCurrency, defaultCurrencyToConvert);
 
-            setIsLoading(false);
-          }
-        )
-      );
+            setCurrencyToConvert(defaultCurrencyToConvert);
+          })
+          .catch(() => {
+            const defaultCurrencyToConvert: Currency | undefined =
+              currencyList.find(
+                (currency: Currency) => currency.code === "USD"
+              );
+            setCurrencyToConvert(defaultCurrencyToConvert);
+          });
+      });
+
+    axios
+      .all([fetchBlueConvertionRatePromise, fetchCurrenciesPromise])
+      .finally(() => {
+        setIsLoading(false);
+      });
 
     fetchEvolution().then((evolution) => {
       const evolutionChart = generateEvolutionChartData(evolution);
       setEvolutionChart(evolutionChart);
       setIsLoadingEvolutionChart(false);
     });
-  };
-
-  useEffect(() => {
-    componentMount();
   }, []);
 
   useEffect(() => {
@@ -122,38 +139,40 @@ export default function CalculadoraBlue() {
     setCurrencyToConvert(currencyToConvert);
   };
 
-  const handleArsToConvertChange = (
-    event: React.ChangeEvent<{ value: unknown }>
-  ) => {
-    firebase
-      .analytics()
-      .logEvent("covert_from_ars", { amount: event.target.value });
-
-    setArsToConvert(event.target.value as number);
-  };
-
-  const handleConvertedAmountChange = (
-    event: React.ChangeEvent<{ value: unknown }>
-  ) => {
-    const convertedAmount = event.target.value as number;
-
-    if (currencyToConvert && blueConvertionRate.blue) {
-      const ars = convertToArs(
-        convertedAmount,
-        blueConvertionRate.blue.value_sell,
-        currencyToConvert.value
-      );
-
+  const handleArsToConvertChange = useCallback(
+    (event: React.ChangeEvent<{ value: unknown }>) => {
       firebase
         .analytics()
-        .logEvent("covert_to_ars", { amount: event.target.value });
+        .logEvent("covert_from_ars", { amount: event.target.value });
 
-      isConvertingToArs.current = true;
-      setArsToConvert(ars);
-    }
+      setArsToConvert(event.target.value as number);
+    },
+    []
+  );
 
-    setConvertedAmount(convertedAmount);
-  };
+  const handleConvertedAmountChange = useCallback(
+    (event: React.ChangeEvent<{ value: unknown }>) => {
+      const convertedAmount = event.target.value as number;
+
+      if (currencyToConvert && blueConvertionRate.blue) {
+        const ars = convertToArs(
+          convertedAmount,
+          blueConvertionRate.blue.value_sell,
+          currencyToConvert.value
+        );
+
+        firebase
+          .analytics()
+          .logEvent("covert_to_ars", { amount: event.target.value });
+
+        isConvertingToArs.current = true;
+        setArsToConvert(ars);
+      }
+
+      setConvertedAmount(convertedAmount);
+    },
+    []
+  );
 
   return (
     <Container component="main" maxWidth="xs">

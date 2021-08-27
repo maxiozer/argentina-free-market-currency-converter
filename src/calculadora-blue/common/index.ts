@@ -1,6 +1,5 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import {
-  BluelyticsResponse,
   Currencies,
   KeyValObject,
   EvolutionResponse,
