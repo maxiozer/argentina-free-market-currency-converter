@@ -41,16 +41,18 @@ import EvolutionChart from "./components/EvolutionChart";
 import firebase from "firebase/app";
 import axios from "axios";
 import PWAPrompt from "react-ios-pwa-prompt";
+import { DEFAULT_CURRENCY } from "./constants";
 
 export default function CalculadoraBlue() {
   const classes = useStyles();
-  const isConvertingToArs = useRef(false);
-  const [arsToConvert, setArsToConvert] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const isConvertingToArs = useRef(false);
+  const [isLoadingEvolutionChart, setIsLoadingEvolutionChart] = useState(true);
+
+  const [arsToConvert, setArsToConvert] = useState(1);
   const [convertedAmount, setConvertedAmount] = useState(0);
   const [currencyToConvert, setCurrencyToConvert] = useState<Currency>();
   const [currencyList, setCurrencyList] = useState<Currencies>([]);
-  const [isLoadingEvolutionChart, setIsLoadingEvolutionChart] = useState(true);
   const [evolutionChart, setEvolutionChart] = useState<EvolutionChartData[]>(
     []
   );
@@ -77,8 +79,8 @@ export default function CalculadoraBlue() {
         fetchLocationCurrency()
           .then((fetchedLocationCurrency) => {
             const defaultLocationCurrency =
-              !fetchedLocationCurrency || fetchedLocationCurrency === "ARS"
-                ? "USD"
+              fetchedLocationCurrency === "ARS"
+                ? DEFAULT_CURRENCY
                 : fetchedLocationCurrency;
 
             const defaultCurrencyToConvert: Currency | undefined =
@@ -86,14 +88,13 @@ export default function CalculadoraBlue() {
                 (currency: Currency) =>
                   currency.code === defaultLocationCurrency
               );
-            console.log(defaultLocationCurrency, defaultCurrencyToConvert);
 
             setCurrencyToConvert(defaultCurrencyToConvert);
           })
           .catch(() => {
             const defaultCurrencyToConvert: Currency | undefined =
               currencyList.find(
-                (currency: Currency) => currency.code === "USD"
+                (currency: Currency) => currency.code === DEFAULT_CURRENCY
               );
             setCurrencyToConvert(defaultCurrencyToConvert);
           });
@@ -125,19 +126,20 @@ export default function CalculadoraBlue() {
     }
   }, [currencyToConvert, arsToConvert, blueConvertionRate]);
 
-  const handleCurrencyToConvertChange = (
-    event: React.ChangeEvent<{ value: unknown }>
-  ) => {
-    const currencyToConvert: Currency | undefined = currencyList.find(
-      (currency) => currency.code === (event.target.value as string)
-    );
+  const handleCurrencyToConvertChange = useCallback(
+    (event: React.ChangeEvent<{ value: unknown }>) => {
+      const currencyToConvert: Currency | undefined = currencyList.find(
+        (currency) => currency.code === (event.target.value as string)
+      );
 
-    firebase.analytics().logEvent("currency_to_convert_change", {
-      currency: event.target.value,
-    });
+      firebase.analytics().logEvent("currency_to_convert_change", {
+        currency: event.target.value,
+      });
 
-    setCurrencyToConvert(currencyToConvert);
-  };
+      setCurrencyToConvert(currencyToConvert);
+    },
+    [currencyList]
+  );
 
   const handleArsToConvertChange = useCallback(
     (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -171,7 +173,7 @@ export default function CalculadoraBlue() {
 
       setConvertedAmount(convertedAmount);
     },
-    []
+    [blueConvertionRate.blue, currencyToConvert]
   );
 
   return (

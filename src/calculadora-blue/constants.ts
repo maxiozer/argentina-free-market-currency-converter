@@ -168,3 +168,5 @@ export const AVAIABLE_CURRENCIES: KeyValObject = {
   CNY: "Yuan chino",
   PLN: "Złoty",
 };
+
+export const DEFAULT_CURRENCY = "USD";
