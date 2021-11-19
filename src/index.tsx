@@ -5,20 +5,21 @@ import firebase from "firebase/app";
 import "firebase/analytics";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core";
+import { ThemeProvider } from "@material-ui/core";
 import CalculadoraBlue from "./calculadora-blue/CalculadoraBlue";
+import { createTheme } from "@material-ui/core/styles";
 
 const appThemeOptions = {
   props: {
     MuiTextField: {
-      variant: "outlined" as "outlined",
+      variant: "outlined" as const,
     },
     MuiSelect: {
-      variant: "outlined" as "outlined",
+      variant: "outlined" as const,
     },
   },
 };
-const appTheme = createMuiTheme(appThemeOptions);
+const appTheme = createTheme(appThemeOptions);
 
 const firebaseConfig = {
   apiKey: "AIzaSyAcmJv53ElrP8h53lfpErTgw4xSa-kZnwo",

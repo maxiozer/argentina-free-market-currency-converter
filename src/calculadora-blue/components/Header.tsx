@@ -1,3 +1,4 @@
+import React from "react";
 import { AppBar, LinearProgress, Toolbar, Typography } from "@material-ui/core";
 
 export default function Header(props: HeaderProps) {
@@ -12,5 +13,5 @@ export default function Header(props: HeaderProps) {
 }
 
 interface HeaderProps {
-  isLoading: Boolean;
+  isLoading: boolean;
 }

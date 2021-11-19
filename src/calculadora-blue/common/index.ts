@@ -63,7 +63,9 @@ export const convertToArs = (
   return Math.round(convertedAmount * 100) / 100;
 };
 
-export const createCurrencyList = (fetchedCurrencies: KeyValObject) => {
+export const createCurrencyList = (
+  fetchedCurrencies: KeyValObject
+): Currencies => {
   const avaiableCurrencies = Object.keys(AVAIABLE_CURRENCIES).filter(
     (avaiableCurrency) => avaiableCurrency in fetchedCurrencies
   );

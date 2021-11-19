@@ -15,6 +15,7 @@ import {
   CssBaseline,
   Toolbar,
 } from "@material-ui/core";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import {
   BluelyticsResponse,
   Currencies,
@@ -42,6 +43,7 @@ import firebase from "firebase/app";
 import axios from "axios";
 import PWAPrompt from "react-ios-pwa-prompt";
 import { DEFAULT_CURRENCY } from "./constants";
+import { useLocalStorage } from "usehooks-ts";
 
 export default function CalculadoraBlue() {
   const classes = useStyles();
@@ -51,7 +53,9 @@ export default function CalculadoraBlue() {
 
   const [arsToConvert, setArsToConvert] = useState(1);
   const [convertedAmount, setConvertedAmount] = useState(0);
-  const [currencyToConvert, setCurrencyToConvert] = useState<Currency>();
+  const [currencyToConvert, setCurrencyToConvert] = useLocalStorage<
+    Currency | undefined
+  >("currency_to_convert", {} as Currency);
   const [currencyList, setCurrencyList] = useState<Currencies>([]);
   const [evolutionChart, setEvolutionChart] = useState<EvolutionChartData[]>(
     []
@@ -76,28 +80,30 @@ export default function CalculadoraBlue() {
         return currencyList;
       })
       .then((currencyList) => {
-        fetchLocationCurrency()
-          .then((fetchedLocationCurrency) => {
-            const defaultLocationCurrency =
-              fetchedLocationCurrency === "ARS"
-                ? DEFAULT_CURRENCY
-                : fetchedLocationCurrency;
+        if (!currencyToConvert?.code) {
+          fetchLocationCurrency()
+            .then((fetchedLocationCurrency) => {
+              const defaultLocationCurrency =
+                fetchedLocationCurrency === "ARS"
+                  ? DEFAULT_CURRENCY
+                  : fetchedLocationCurrency;
 
-            const defaultCurrencyToConvert: Currency | undefined =
-              currencyList.find(
-                (currency: Currency) =>
-                  currency.code === defaultLocationCurrency
-              );
+              const defaultCurrencyToConvert: Currency | undefined =
+                currencyList.find(
+                  (currency: Currency) =>
+                    currency.code === defaultLocationCurrency
+                );
 
-            setCurrencyToConvert(defaultCurrencyToConvert);
-          })
-          .catch(() => {
-            const defaultCurrencyToConvert: Currency | undefined =
-              currencyList.find(
-                (currency: Currency) => currency.code === DEFAULT_CURRENCY
-              );
-            setCurrencyToConvert(defaultCurrencyToConvert);
-          });
+              setCurrencyToConvert(defaultCurrencyToConvert);
+            })
+            .catch(() => {
+              const defaultCurrencyToConvert: Currency | undefined =
+                currencyList.find(
+                  (currency: Currency) => currency.code === DEFAULT_CURRENCY
+                );
+              setCurrencyToConvert(defaultCurrencyToConvert);
+            });
+        }
       });
 
     axios
@@ -127,16 +133,18 @@ export default function CalculadoraBlue() {
   }, [currencyToConvert, arsToConvert, blueConvertionRate]);
 
   const handleCurrencyToConvertChange = useCallback(
-    (event: React.ChangeEvent<{ value: unknown }>) => {
-      const currencyToConvert: Currency | undefined = currencyList.find(
-        (currency) => currency.code === (event.target.value as string)
-      );
+    (event: any, newValue: Currency | null) => {
+      if (newValue) {
+        const currencyToConvert: Currency | undefined = currencyList.find(
+          (currency) => currency.code === (newValue.code as string)
+        );
 
-      firebase.analytics().logEvent("currency_to_convert_change", {
-        currency: event.target.value,
-      });
+        firebase.analytics().logEvent("currency_to_convert_change", {
+          currency: newValue.code,
+        });
 
-      setCurrencyToConvert(currencyToConvert);
+        setCurrencyToConvert(currencyToConvert);
+      }
     },
     [currencyList]
   );
@@ -211,17 +219,17 @@ export default function CalculadoraBlue() {
                 />
               </Grid>
               <Grid item xs={6} sm={6}>
-                <Select
-                  className={classes.select}
-                  value={currencyToConvert ? currencyToConvert.code : ""}
+                <Autocomplete
+                  id="currency-to-convert"
+                  options={currencyList}
+                  disableClearable
+                  defaultValue={currencyToConvert}
+                  getOptionLabel={(option) => option.name}
+                  getOptionSelected={(option, value) => option.code === value.code}
                   onChange={handleCurrencyToConvertChange}
-                >
-                  {currencyList.map((currency: Currency) => (
-                    <MenuItem key={currency.code} value={currency.code}>
-                      {currency.name}
-                    </MenuItem>
-                  ))}
-                </Select>
+                  className={classes.select}
+                  renderInput={(params) => <TextField {...params} />}
+                />
               </Grid>
               <Grid item xs={12} sm={12}>
                 <EvolutionChart
