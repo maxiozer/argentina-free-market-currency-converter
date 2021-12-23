@@ -9,8 +9,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import {
   Container,
   Grid,
-  MenuItem,
-  Select,
   TextField,
   CssBaseline,
   Toolbar,
@@ -45,6 +43,8 @@ import PWAPrompt from "react-ios-pwa-prompt";
 import { DEFAULT_CURRENCY } from "./constants";
 import { useLocalStorage } from "usehooks-ts";
 
+const DEFAULT_CURRENCY_LIST_ITEM = { code: "", name: "", value: 0 };
+
 export default function CalculadoraBlue() {
   const classes = useStyles();
   const [isLoading, setIsLoading] = useState(true);
@@ -55,7 +55,7 @@ export default function CalculadoraBlue() {
   const [convertedAmount, setConvertedAmount] = useState(0);
   const [currencyToConvert, setCurrencyToConvert] = useLocalStorage<
     Currency | undefined
-  >("currency_to_convert", {} as Currency);
+  >("currency_to_convert", DEFAULT_CURRENCY_LIST_ITEM);
   const [currencyList, setCurrencyList] = useState<Currencies>([]);
   const [evolutionChart, setEvolutionChart] = useState<EvolutionChartData[]>(
     []
@@ -80,7 +80,7 @@ export default function CalculadoraBlue() {
         return currencyList;
       })
       .then((currencyList) => {
-        if (!currencyToConvert?.code) {
+        if (currencyToConvert === DEFAULT_CURRENCY_LIST_ITEM) {
           fetchLocationCurrency()
             .then((fetchedLocationCurrency) => {
               const defaultLocationCurrency =
@@ -142,7 +142,6 @@ export default function CalculadoraBlue() {
         firebase.analytics().logEvent("currency_to_convert_change", {
           currency: newValue.code,
         });
-
         setCurrencyToConvert(currencyToConvert);
       }
     },
@@ -198,7 +197,7 @@ export default function CalculadoraBlue() {
             <CurrencyValues blueConvertionRate={blueConvertionRate} />
             <LastUpdate />
             <Grid container spacing={2}>
-              <Grid item xs={6} sm={6}>
+              <Grid item xs={5} sm={6}>
                 <TextField
                   type="number"
                   autoFocus
@@ -206,26 +205,31 @@ export default function CalculadoraBlue() {
                   value={arsToConvert}
                 />
               </Grid>
-              <Grid item xs={6} sm={6}>
-                <Select className={classes.select} value={"ARS"} disabled>
-                  <MenuItem value={"ARS"}>Pesos Argentinos</MenuItem>
-                </Select>
+              <Grid item xs={7} sm={6}>
+                <TextField
+                  type="text"
+                  value="Pesos Argentinos"
+                  disabled={true}
+                />
               </Grid>
-              <Grid item xs={6} sm={6}>
+              <Grid item xs={5} sm={6}>
                 <TextField
                   type="number"
                   value={convertedAmount}
                   onChange={handleConvertedAmountChange}
                 />
               </Grid>
-              <Grid item xs={6} sm={6}>
+              <Grid item xs={7} sm={6}>
                 <Autocomplete
                   id="currency-to-convert"
                   options={currencyList}
                   disableClearable
-                  defaultValue={currencyToConvert}
+                  selectOnFocus
+                  value={currencyToConvert}
                   getOptionLabel={(option) => option.name}
-                  getOptionSelected={(option, value) => option.code === value.code}
+                  getOptionSelected={(option, value) =>
+                    option.code === value.code
+                  }
                   onChange={handleCurrencyToConvertChange}
                   className={classes.select}
                   renderInput={(params) => <TextField {...params} />}

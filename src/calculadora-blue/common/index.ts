@@ -7,6 +7,7 @@ import {
 } from "../types";
 import { AVAIABLE_CURRENCIES } from "../constants";
 import { blue } from "@material-ui/core/colors";
+import lodash from "lodash";
 
 export const fetchLocationCurrency = async () => {
   const { data } = await axios.get("https://ipapi.co/currency/");
@@ -86,45 +87,24 @@ export const createCurrencyList = (
 export const generateEvolutionChartData = (
   data: EvolutionResponse[]
 ): EvolutionChartData[] => {
-  const currentYear = new Date().getFullYear();
-  const emptyChartByYear = {
-    oficial: { sum: 0, count: 0 },
-    blue: { sum: 0, count: 0 },
-  };
+  const evolutionChartData = lodash(data)
+    .groupBy((item) => {
+      const date = new Date(item.date);
+      return date.getUTCFullYear();
+    })
+    .map((year) => year.slice(0, 2))
+    .flatten()
+    .value()
+    .reduce((arr, records) => {
+      const date = new Date(records.date);
+      const year = date.getUTCFullYear();
+      arr[year] = arr[year] || { oficial: 0, blue: 0, year: year.toString() };
 
-  const chartByYear = data.reduce<{
-    [key: number]: typeof emptyChartByYear;
-  }>((retData, data) => {
-    const year = new Date(data.date).getFullYear();
-    const retYear = retData[year] || { ...emptyChartByYear };
+      if (records.source === "Oficial") arr[year].oficial = records.value_sell;
+      else arr[year].blue = records.value_sell;
 
-    if (data.source === "Oficial")
-      retYear.oficial = {
-        sum: retYear.oficial.sum + data.value_sell,
-        count: retYear.oficial.count + 1,
-      };
-    else
-      retYear.blue = {
-        sum: retYear.blue.sum + data.value_sell,
-        count: retYear.blue.count + 1,
-      };
+      return arr;
+    }, <{ [key: number]: EvolutionChartData }>{});
 
-    retData[year] = retYear;
-    return retData;
-  }, {});
-
-  return Object.keys(chartByYear)
-    .filter((year: string) => Number(year) >= currentYear - 7)
-    .map((year: string) => {
-      const yearInt = Number(year);
-      return {
-        year,
-        oficial: Math.round(
-          chartByYear[yearInt].oficial.sum / chartByYear[yearInt].oficial.count
-        ),
-        blue: Math.round(
-          chartByYear[yearInt].blue.sum / chartByYear[yearInt].blue.count
-        ),
-      };
-    });
+  return Object.values(evolutionChartData);
 };

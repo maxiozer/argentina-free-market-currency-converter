@@ -10,30 +10,29 @@ import {
   LineSeries,
   Legend,
   Tooltip,
+  Title,
 } from "@devexpress/dx-react-chart-material-ui";
-import { Title } from "@devexpress/dx-react-chart-material-ui";
-import {
-  ValueScale,
-  Animation,
-  EventTracker,
-} from "@devexpress/dx-react-chart";
+import { Animation } from "@devexpress/dx-react-chart";
 
 export default function EvolutionChart(props: EvolutionProps) {
   return (
     <Paper>
       <Chart data={props.data}>
-        <ValueScale name="Dolar oficial" />
-        <ValueScale name="Dolar blue" />
         <LineSeries
           name="Dolar oficial"
           valueField="oficial"
           argumentField="year"
+          color="green"
         />
-        <LineSeries name="Dolar blue" valueField="blue" argumentField="year" />
+        <LineSeries
+          name="Dolar blue"
+          valueField="blue"
+          argumentField="year"
+          color="blue"
+        />
         <ArgumentAxis />
         <ValueAxis />
         <Animation />
-        <EventTracker />
         <Tooltip />
         <Legend position="bottom" />
         <Title text="Evolución anual" />

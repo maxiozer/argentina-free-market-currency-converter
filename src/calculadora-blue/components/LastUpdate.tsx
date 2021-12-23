@@ -5,7 +5,7 @@ export default function LastUpdate() {
   const updateDate = new Date();
 
   return (
-    <Typography variant="subtitle1">
+    <Typography variant="subtitle2">
       Ultima actualizacion:{" "}
       {updateDate.toLocaleDateString("es-AR", {
         year: "numeric",

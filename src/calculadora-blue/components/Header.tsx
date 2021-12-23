@@ -5,7 +5,7 @@ export default function Header(props: HeaderProps) {
   return (
     <AppBar position="fixed">
       <Toolbar>
-        <Typography variant="h6">Calculadora Blue</Typography>
+        <Typography variant="h6">Conversor de divisas en Dólar Blue</Typography>
       </Toolbar>
       {props.isLoading && <LinearProgress />}
     </AppBar>
