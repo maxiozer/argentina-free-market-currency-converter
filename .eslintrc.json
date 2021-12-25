@@ -19,6 +19,7 @@
   "plugins": ["react", "react-hooks"],
   "rules": {
     "react-hooks/exhaustive-deps": 0,
-    "@typescript-eslint/explicit-module-boundary-types": "off"
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "no-unused-vars": "warn"
   }
 }

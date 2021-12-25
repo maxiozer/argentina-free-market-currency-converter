@@ -1,6 +1,5 @@
 import React from "react";
 import { EvolutionChartData } from "../types";
-import Paper from "@material-ui/core/Paper";
 import { LinearProgress } from "@material-ui/core";
 
 import {
@@ -16,8 +15,7 @@ import { Animation } from "@devexpress/dx-react-chart";
 
 export default function EvolutionChart(props: EvolutionProps) {
   return (
-    <Paper>
-      <Chart data={props.data}>
+      <Chart data={props.data} height={370}>
         <LineSeries
           name="Dolar oficial"
           valueField="oficial"
@@ -38,7 +36,6 @@ export default function EvolutionChart(props: EvolutionProps) {
         <Title text="Evolución anual" />
         {props.isLoading && <LinearProgress color="secondary" />}
       </Chart>
-    </Paper>
   );
 }
 

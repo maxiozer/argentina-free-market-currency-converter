@@ -1,19 +1,25 @@
 import React from "react";
 import { Typography } from "@material-ui/core";
+import { withStyles } from "@material-ui/core/styles";
+
+const GrayTextTypography = withStyles({
+  root: {
+    color: "gray",
+  },
+})(Typography);
 
 export default function LastUpdate() {
   const updateDate = new Date();
 
   return (
-    <Typography variant="subtitle2">
+    <GrayTextTypography align="center" variant="subtitle2">
       Ultima actualizacion:{" "}
       {updateDate.toLocaleDateString("es-AR", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
+        month: "short",
+        day: "numeric",
         hour: "2-digit",
         minute: "2-digit",
       })}
-    </Typography>
+    </GrayTextTypography>
   );
 }

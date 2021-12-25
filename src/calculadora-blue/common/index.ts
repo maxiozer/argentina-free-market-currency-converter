@@ -106,5 +106,5 @@ export const generateEvolutionChartData = (
       return arr;
     }, <{ [key: number]: EvolutionChartData }>{});
 
-  return Object.values(evolutionChartData);
+  return Object.values(evolutionChartData).slice(4);
 };

@@ -8,6 +8,7 @@ import reportWebVitals from "./reportWebVitals";
 import { ThemeProvider } from "@material-ui/core";
 import CalculadoraBlue from "./calculadora-blue/CalculadoraBlue";
 import { createTheme } from "@material-ui/core/styles";
+import { hotjar } from 'react-hotjar';
 
 const appThemeOptions = {
   props: {
@@ -33,6 +34,8 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
+
+hotjar.initialize(2760759, 6);
 
 ReactDOM.render(
   <React.StrictMode>

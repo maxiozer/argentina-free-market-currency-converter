@@ -12,6 +12,7 @@ import {
   TextField,
   CssBaseline,
   Toolbar,
+  Divider,
 } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import {
@@ -189,51 +190,60 @@ export default function CalculadoraBlue() {
       <Header isLoading={isLoading}></Header>
       <Toolbar />
       <div className={classes.paper}>
-        {isLoading ? (
-          <LoadingForm />
-        ) : (
+        {isLoading && <LoadingForm />}
+
+        {!isLoading && (
           <Fragment>
             <PWAPrompt timesToShow={3} permanentlyHideOnDismiss={false} />
-            <CurrencyValues blueConvertionRate={blueConvertionRate} />
-            <LastUpdate />
             <Grid container spacing={2}>
-              <Grid item xs={5} sm={6}>
-                <TextField
-                  type="number"
-                  autoFocus
-                  onChange={handleArsToConvertChange}
-                  value={arsToConvert}
-                />
+              <Grid container item spacing={1}>
+                <Grid item xs={12} sm={12}>
+                  <CurrencyValues blueConvertionRate={blueConvertionRate} />
+                  <LastUpdate />
+                </Grid>
               </Grid>
-              <Grid item xs={7} sm={6}>
-                <TextField
-                  type="text"
-                  value="Pesos Argentinos"
-                  disabled={true}
-                />
+              <Grid container item spacing={1}>
+                <Grid item xs={5} sm={6}>
+                  <TextField
+                    type="number"
+                    autoFocus
+                    onChange={handleArsToConvertChange}
+                    value={arsToConvert}
+                  />
+                </Grid>
+                <Grid item xs={7} sm={6}>
+                  <TextField
+                    type="text"
+                    value="Pesos Argentinos"
+                    disabled={true}
+                  />
+                </Grid>
+                <Grid item xs={5} sm={6}>
+                  <TextField
+                    type="number"
+                    value={convertedAmount}
+                    onChange={handleConvertedAmountChange}
+                  />
+                </Grid>
+                <Grid item xs={7} sm={6}>
+                  <Autocomplete
+                    id="currency-to-convert"
+                    options={currencyList}
+                    disableClearable
+                    selectOnFocus
+                    value={currencyToConvert}
+                    getOptionLabel={(option) => option.name}
+                    getOptionSelected={(option, value) =>
+                      option.code === value.code
+                    }
+                    onChange={handleCurrencyToConvertChange}
+                    className={classes.select}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={5} sm={6}>
-                <TextField
-                  type="number"
-                  value={convertedAmount}
-                  onChange={handleConvertedAmountChange}
-                />
-              </Grid>
-              <Grid item xs={7} sm={6}>
-                <Autocomplete
-                  id="currency-to-convert"
-                  options={currencyList}
-                  disableClearable
-                  selectOnFocus
-                  value={currencyToConvert}
-                  getOptionLabel={(option) => option.name}
-                  getOptionSelected={(option, value) =>
-                    option.code === value.code
-                  }
-                  onChange={handleCurrencyToConvertChange}
-                  className={classes.select}
-                  renderInput={(params) => <TextField {...params} />}
-                />
+              <Grid item xs={12} sm={12}>
+                <Divider variant="middle" />
               </Grid>
               <Grid item xs={12} sm={12}>
                 <EvolutionChart
