@@ -245,14 +245,14 @@ export default function CalculadoraBlue() {
                 <Divider variant="middle" />
               </Grid>
               <Grid item xs={12} sm={12}>
-                <AdSense.Google
+                {/* <AdSense.Google
                   className="adsbygoogle"
                   client="ca-pub-2491944144260352"
                   slot="5159911770"
                   style={{ display: "block" }}
                   responsive="true"
                   format="auto"
-                />
+                /> */}
                 <EvolutionChart
                   data={evolutionChart}
                   isLoading={isLoadingEvolutionChart}
