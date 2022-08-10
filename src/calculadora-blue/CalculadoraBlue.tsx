@@ -41,10 +41,9 @@ import EvolutionChart from "./components/EvolutionChart";
 import firebase from "firebase/app";
 import axios from "axios";
 import PWAPrompt from "react-ios-pwa-prompt";
-import { DEFAULT_CURRENCY } from "./constants";
+import { DEFAULT_CURRENCY, DEFAULT_CURRENCY_LIST_ITEM } from "./constants";
 import { useLocalStorage } from "usehooks-ts";
-
-const DEFAULT_CURRENCY_LIST_ITEM = { code: "", name: "", value: 0 };
+import AdSense from "react-adsense";
 
 export default function CalculadoraBlue() {
   const classes = useStyles();
@@ -62,16 +61,17 @@ export default function CalculadoraBlue() {
     []
   );
   const [blueConvertionRate, setBlueConvertionRate] =
-    useState<BluelyticsResponse>({});
+    useLocalStorage<BluelyticsResponse>("bluelytics_response", {});
 
   useEffect(() => {
-    const fetchBlueConvertionRatePromise = fetchBlueConvertionRate().then(
-      (blueConvertionRate) => {
-        setBlueConvertionRate(blueConvertionRate);
-        if (blueConvertionRate && blueConvertionRate.blue)
-          setArsToConvert(blueConvertionRate.blue?.value_sell);
-      }
-    );
+    if (blueConvertionRate && blueConvertionRate.blue)
+      setArsToConvert(blueConvertionRate.blue?.value_sell);
+  }, [blueConvertionRate]);
+
+  
+  useEffect(() => {
+    const fetchBlueConvertionRatePromise = fetchBlueConvertionRate()
+      .then((blueConvertionRate) => setBlueConvertionRate(blueConvertionRate));
 
     const fetchCurrenciesPromise = fetchCurrencies()
       .then((fetchedCurrencies) => {
@@ -191,7 +191,6 @@ export default function CalculadoraBlue() {
       <Toolbar />
       <div className={classes.paper}>
         {isLoading && <LoadingForm />}
-
         {!isLoading && (
           <Fragment>
             <PWAPrompt timesToShow={3} permanentlyHideOnDismiss={false} />
@@ -246,6 +245,14 @@ export default function CalculadoraBlue() {
                 <Divider variant="middle" />
               </Grid>
               <Grid item xs={12} sm={12}>
+                <AdSense.Google
+                  className="adsbygoogle"
+                  client="ca-pub-2491944144260352"
+                  slot="5159911770"
+                  style={{ display: "block" }}
+                  responsive="true"
+                  format="auto"
+                />
                 <EvolutionChart
                   data={evolutionChart}
                   isLoading={isLoadingEvolutionChart}
