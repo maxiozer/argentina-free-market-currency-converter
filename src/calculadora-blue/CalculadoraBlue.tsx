@@ -206,21 +206,6 @@ export default function CalculadoraBlue() {
                 <Grid item xs={5} sm={6}>
                   <TextField
                     type="number"
-                    autoFocus
-                    onChange={handleArsToConvertChange}
-                    value={arsToConvert}
-                  />
-                </Grid>
-                <Grid item xs={7} sm={6}>
-                  <TextField
-                    type="text"
-                    value="Pesos Argentinos"
-                    disabled={true}
-                  />
-                </Grid>
-                <Grid item xs={5} sm={6}>
-                  <TextField
-                    type="number"
                     value={convertedAmount}
                     onChange={handleConvertedAmountChange}
                   />
@@ -239,6 +224,21 @@ export default function CalculadoraBlue() {
                     onChange={handleCurrencyToConvertChange}
                     className={classes.select}
                     renderInput={(params) => <TextField {...params} />}
+                  />
+                </Grid>
+                <Grid item xs={5} sm={6}>
+                  <TextField
+                    type="number"
+                    autoFocus
+                    onChange={handleArsToConvertChange}
+                    value={arsToConvert}
+                  />
+                </Grid>
+                <Grid item xs={7} sm={6}>
+                  <TextField
+                    type="text"
+                    value="Pesos Argentinos"
+                    disabled={true}
                   />
                 </Grid>
               </Grid>

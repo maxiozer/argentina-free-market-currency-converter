@@ -9,33 +9,14 @@ import { ThemeProvider } from "@material-ui/core";
 import CalculadoraBlue from "./calculadora-blue/CalculadoraBlue";
 import { createTheme } from "@material-ui/core/styles";
 import { hotjar } from 'react-hotjar';
+import { firebaseConfig, appThemeOptions, HOTJAR_ID } from "./constants";
 
-const appThemeOptions = {
-  props: {
-    MuiTextField: {
-      variant: "outlined" as const,
-    },
-    MuiSelect: {
-      variant: "outlined" as const,
-    },
-  },
-};
 const appTheme = createTheme(appThemeOptions);
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAcmJv53ElrP8h53lfpErTgw4xSa-kZnwo",
-  authDomain: "free-market-currency-converter.firebaseapp.com",
-  projectId: "free-market-currency-converter",
-  storageBucket: "free-market-currency-converter.appspot.com",
-  messagingSenderId: "942367574551",
-  appId: "1:942367574551:web:5101a4401734d1e2916a52",
-  measurementId: "G-XWG7N57CET",
-};
 
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 
-hotjar.initialize(2760759, 6);
+hotjar.initialize(HOTJAR_ID, 6);
 
 ReactDOM.render(
   <React.StrictMode>
