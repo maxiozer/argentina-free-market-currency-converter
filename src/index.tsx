@@ -6,7 +6,7 @@ import "firebase/analytics";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
 import { ThemeProvider } from "@material-ui/core";
-import CalculadoraBlue from "./calculadora-blue/CalculadoraBlue";
+import App from "./calculadora-blue/App";
 import { createTheme } from "@material-ui/core/styles";
 import { hotjar } from 'react-hotjar';
 import { firebaseConfig, appThemeOptions, HOTJAR_ID } from "./constants";
@@ -21,7 +21,7 @@ hotjar.initialize(HOTJAR_ID, 6);
 ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={appTheme}>
-      <CalculadoraBlue />
+      <App />
     </ThemeProvider>
   </React.StrictMode>,
   document.getElementById("root")
