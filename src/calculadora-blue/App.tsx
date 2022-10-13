@@ -16,28 +16,23 @@ import Calculadora from "./Calculadora";
 import TabPanel from "./components/TabPanel";
 import { useAtom } from "jotai";
 import {
-  currentTabAtom,
-  currentTabReducer,
+  changeCurrentTabAtom,
   getDolarBlueAtom,
-  getDolarTuristaAtom,
+  getDolarTuristaAtom
 } from "../atom";
 import EvolutionChart from "./components/EvolutionChart";
 import { useSwipeable } from "react-swipeable";
-import { useReducerAtom } from "jotai/utils";
 
 export default function App() {
   const classes = useStyles();
   const [blueConvertionRate] = useAtom(getDolarBlueAtom);
   const [turistaConvertionRate] = useAtom(getDolarTuristaAtom);
 
-  const [currentTabId, dispatchCurrentTabReducer] = useReducerAtom(
-    currentTabAtom,
-    currentTabReducer
-  );
+  const [currentTabId, changeCurrentTab] = useAtom(changeCurrentTabAtom);
 
   const swipeConfig = useSwipeable({
-    onSwipedLeft: () => dispatchCurrentTabReducer({ type: "LEFT" }),
-    onSwipedRight: () => dispatchCurrentTabReducer({ type: "RIGHT" }),
+    onSwipedLeft: () => changeCurrentTab(currentTabId + 1),
+    onSwipedRight: () => changeCurrentTab(currentTabId - 1),
   });
 
   return (

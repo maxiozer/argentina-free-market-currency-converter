@@ -86,17 +86,13 @@ export const getEvolutionChartAtom = atom<Promise<EvolutionChartData[]>>(
       .catch(() => JSON.parse(localStorage.getItem("evolution_chart") || ""))
 );
 
-
 export const currentTabAtom = atomWithStorage<number>("current_tab", 0);
 
-export const currentTabReducer = (prev: any, action: any) => {
-  alert(prev);
-  switch (action.type) {
-    case "LEFT":
-      return prev < TABS.length - 1 ? prev + 1 : prev;
-    case "RIGHT":
-      return prev > 0 ? prev + 1 : prev;
-    default:
-      throw new Error("unknown action type");
+export const changeCurrentTabAtom = atom(
+  (get) => get(currentTabAtom),
+  (get, set, newValue: number) => {
+    if (newValue > TABS.length - 1 || newValue < 0) return;
+
+    set(currentTabAtom, newValue);
   }
-};
+);
