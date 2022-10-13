@@ -1,5 +1,5 @@
 /// <reference path="declarations.d.ts"/>
-import React from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
 import firebase from "firebase/app";
 import "firebase/analytics";
@@ -8,8 +8,9 @@ import reportWebVitals from "./reportWebVitals";
 import { ThemeProvider } from "@material-ui/core";
 import App from "./calculadora-blue/App";
 import { createTheme } from "@material-ui/core/styles";
-import { hotjar } from 'react-hotjar';
+import { hotjar } from "react-hotjar";
 import { firebaseConfig, appThemeOptions, HOTJAR_ID } from "./constants";
+import LoadingForm from "./calculadora-blue/components/LoadingForm";
 
 const appTheme = createTheme(appThemeOptions);
 
@@ -21,7 +22,9 @@ hotjar.initialize(HOTJAR_ID, 6);
 ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={appTheme}>
-      <App />
+      <Suspense fallback={<LoadingForm />}>
+        <App />
+      </Suspense>
     </ThemeProvider>
   </React.StrictMode>,
   document.getElementById("root")

@@ -1,7 +1,6 @@
 import React from "react";
 import {
   AppBar,
-  LinearProgress,
   Toolbar,
   Typography,
   Tabs,
@@ -33,13 +32,11 @@ export default function Header(props: HeaderProps) {
         <Tab label="Dolar blue" {...a11yProps(0)} />
         <Tab label="Dolar Turista" {...a11yProps(1)} />
       </Tabs>
-      {props.isLoading && <LinearProgress />}
     </AppBar>
   );
 }
 
 interface HeaderProps {
-  isLoading: boolean;
   tabId: number;
   onTabChange: any;
 }

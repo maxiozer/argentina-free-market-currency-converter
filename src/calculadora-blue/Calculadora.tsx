@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, TextField, Divider } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { Currencies, Currency } from "./types";
+import { Currency } from "./types";
 import { convertFromArs, convertToArs } from "./common";
 
 import CurrencyValues from "./components/CurrencyValue";
@@ -11,13 +11,18 @@ import EvolutionChart from "./components/EvolutionChart";
 
 import firebase from "firebase/app";
 
+import { useAtom } from "jotai";
+import {
+  getCurrencyListAtom,
+  currencyToConvertAtom,
+  getLocationCurrencyAtom,
+} from "../atom";
+import { DEFAULT_CURRENCY_LIST_ITEM } from "./constants";
+
 interface CalculadoraProps {
   buyPrice: number;
   sellPrice: number;
   lastUpdate: Date;
-  currencyToConvert: Currency | undefined;
-  currencyList: Currencies;
-  setCurrencyToConvert: any;
   isLoadingEvolutionChart: any;
   evolutionChart: any;
 }
@@ -26,9 +31,6 @@ export default function Calculadora({
   sellPrice,
   buyPrice,
   lastUpdate,
-  currencyToConvert,
-  currencyList,
-  setCurrencyToConvert,
   isLoadingEvolutionChart,
   evolutionChart,
 }: CalculadoraProps) {
@@ -36,6 +38,12 @@ export default function Calculadora({
   const [convertedAmount, setConvertedAmount] = useState(0);
   const isConvertingToArs = useRef(false);
   const [arsToConvert, setArsToConvert] = useState(1);
+
+  const [currencyToConvert, setCurrencyToConvert] = useAtom(
+    currencyToConvertAtom
+  );
+  const [currencyList] = useAtom(getCurrencyListAtom);
+  const [locationCurrency] = useAtom(getLocationCurrencyAtom);
 
   useEffect(() => {
     if (sellPrice) setArsToConvert(sellPrice);
@@ -53,6 +61,15 @@ export default function Calculadora({
       setConvertedAmount(convertedAmount);
     }
   }, [currencyToConvert, arsToConvert, buyPrice, sellPrice]);
+
+  useEffect(() => {
+    if (currencyToConvert === DEFAULT_CURRENCY_LIST_ITEM) {
+      const defaultCurrencyToConvert: Currency | undefined = currencyList.find(
+        (currency: Currency) => currency.code === locationCurrency
+      );
+      setCurrencyToConvert(defaultCurrencyToConvert);
+    }
+  }, [currencyList, locationCurrency]);
 
   const onConvertedAmountChange = useCallback(
     (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -149,12 +166,12 @@ export default function Calculadora({
       <Grid item xs={12} sm={12}>
         <Divider variant="middle" />
       </Grid>
-      <Grid item xs={12} sm={12}>
+      {/* <Grid item xs={12} sm={12}>
         <EvolutionChart
           data={evolutionChart}
           isLoading={isLoadingEvolutionChart}
         />
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 }
