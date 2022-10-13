@@ -126,14 +126,14 @@ export default function Calculadora({
         </Grid>
       </Grid>
       <Grid container item spacing={1}>
-        <Grid item xs={5} sm={6}>
+        <Grid item xs={5} sm={5}>
           <TextField
             type="number"
             value={convertedAmount}
             onChange={onConvertedAmountChange}
           />
         </Grid>
-        <Grid item xs={7} sm={6}>
+        <Grid item xs={7} sm={7}>
           <Autocomplete
             id="currency-to-convert"
             options={currencyList}
@@ -147,15 +147,15 @@ export default function Calculadora({
             renderInput={(params) => <TextField {...params} />}
           />
         </Grid>
-        <Grid item xs={5} sm={6}>
+        <Grid item xs={5} sm={5}>
           <TextField
             type="number"
             onChange={handleArsToConvertChange}
             value={arsToConvert}
           />
         </Grid>
-        <Grid item xs={7} sm={6}>
-          <TextField type="text" value="Pesos Argentinos" disabled={true} />
+        <Grid item xs={7} sm={7}>
+          <TextField type="text" value="Pesos Argentinos (ARS)" disabled={true} fullWidth />
         </Grid>
       </Grid>
     </Grid>

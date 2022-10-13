@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from "react";
+import React, { Suspense } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Box,
@@ -36,7 +36,7 @@ export default function App() {
   });
 
   return (
-    <Container component="main" maxWidth="xs" {...swipeConfig}>
+    <Container component="main" maxWidth="sm" {...swipeConfig}>
       <Box
         height="100vh"
         display="flex"

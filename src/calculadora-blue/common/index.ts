@@ -84,7 +84,7 @@ export const createCurrencyList = (
     (avaiableCurrency: string) => {
       return {
         code: avaiableCurrency,
-        name: AVAIABLE_CURRENCIES[avaiableCurrency],
+        name: `${AVAIABLE_CURRENCIES[avaiableCurrency]} (${avaiableCurrency})`,
         value: fetchedCurrencies[avaiableCurrency],
       };
     }
