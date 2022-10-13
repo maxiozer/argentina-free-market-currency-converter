@@ -17,6 +17,8 @@ import TabPanel from "./components/TabPanel";
 import { useAtom } from "jotai";
 import { getDolarBlueAtom, getDolarTuristaAtom } from "../atom";
 import EvolutionChart from "./components/EvolutionChart";
+import { useSwipeable } from "react-swipeable";
+import { TABS } from "./constants";
 
 export default function App() {
   const classes = useStyles();
@@ -24,11 +26,24 @@ export default function App() {
   const [turistaConvertionRate] = useAtom(getDolarTuristaAtom);
 
   const [tabId, setTabId] = useState(0);
-  const onTabChange = (event: unknown, newValue: number) => setTabId(newValue);
+  const onTabChange = (event: unknown, newValue: number) => {
+    if (newValue > TABS.length - 1 || newValue < 0) return;
+    
+    setTabId(newValue);
+  };
+  const handlers = useSwipeable({
+    onSwipedLeft: () => onTabChange(null, tabId + 1),
+    onSwipedRight: () => onTabChange(null, tabId - 1),
+  });
 
   return (
-    <Container component="main" maxWidth="xs">
-      <div className={classes.paper}>
+    <Container component="main" maxWidth="xs" {...handlers}>
+      <Box
+        height="100vh"
+        display="flex"
+        flexDirection="column"
+        className={classes.paper}
+      >
         <CssBaseline />
         <Header tabId={tabId} onTabChange={onTabChange} />
         <Toolbar />
@@ -72,7 +87,7 @@ export default function App() {
             lastUpdate={new Date(turistaConvertionRate.fecha)}
           />
         </TabPanel>
-      </div>
+      </Box>
     </Container>
   );
 }

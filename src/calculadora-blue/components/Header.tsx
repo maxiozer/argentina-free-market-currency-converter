@@ -1,11 +1,6 @@
 import React from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Tabs,
-  Tab,
-} from "@material-ui/core";
+import { AppBar, Toolbar, Typography, Tabs, Tab } from "@material-ui/core";
+import { TABS } from "../constants";
 
 export default function Header(props: HeaderProps) {
   function a11yProps(index: any) {
@@ -29,9 +24,9 @@ export default function Header(props: HeaderProps) {
         aria-label="Dolar"
         centered
       >
-        <Tab label="Dolar blue" {...a11yProps(0)} />
-        <Tab label="Dolar Turista" {...a11yProps(1)} />
-        <Tab label="Dolar Qatar" {...a11yProps(2)} />
+        {TABS.map((value, index) => (
+          <Tab key={index} label={value} {...a11yProps(index)} />
+        ))}
       </Tabs>
     </AppBar>
   );

@@ -171,3 +171,8 @@ export const AVAIABLE_CURRENCIES: KeyValObject = {
 
 export const DEFAULT_CURRENCY = "USD";
 export const DEFAULT_CURRENCY_LIST_ITEM = { code: "", name: "", value: 0 };
+export const TABS = [
+  "Dolar blue",
+  "Dolar Turista",
+  "Dolar Qatar"
+]
