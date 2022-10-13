@@ -1,8 +1,15 @@
 import React from "react";
 import { AppBar, Toolbar, Typography, Tabs, Tab } from "@material-ui/core";
 import { TABS } from "../constants";
+import { useAtom } from "jotai";
+import { currentTabAtom } from "../../atom";
 
-export default function Header(props: HeaderProps) {
+export default function Header() {
+  const [currentTabId, setCurrentTabId] = useAtom(currentTabAtom);
+
+  const onTabChange = (event: unknown, newValue: number) =>
+    setCurrentTabId(newValue);
+
   function a11yProps(index: any) {
     return {
       id: `action-tab-${index}`,
@@ -16,11 +23,9 @@ export default function Header(props: HeaderProps) {
         <Typography variant="h6">Conversor de divisas en Dólar Blue</Typography>
       </Toolbar>
       <Tabs
-        value={props.tabId}
-        onChange={props.onTabChange}
+        value={currentTabId}
+        onChange={onTabChange}
         variant="fullWidth"
-        // indicatorColor="secondary"
-        // textColor="primary"
         aria-label="Dolar"
         centered
       >
@@ -30,9 +35,4 @@ export default function Header(props: HeaderProps) {
       </Tabs>
     </AppBar>
   );
-}
-
-interface HeaderProps {
-  tabId: number;
-  onTabChange: any;
 }

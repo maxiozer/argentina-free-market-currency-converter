@@ -12,6 +12,7 @@ import {
 import {
   DEFAULT_CURRENCY,
   DEFAULT_CURRENCY_LIST_ITEM,
+  TABS,
 } from "./calculadora-blue/constants";
 import {
   Currencies,
@@ -82,7 +83,20 @@ export const getEvolutionChartAtom = atom<Promise<EvolutionChartData[]>>(
 
         return evolutionChartData;
       })
-      .catch(() =>
-        JSON.parse(localStorage.getItem("evolution_chart") || "")
-      )
+      .catch(() => JSON.parse(localStorage.getItem("evolution_chart") || ""))
 );
+
+
+export const currentTabAtom = atomWithStorage<number>("current_tab", 0);
+
+export const currentTabReducer = (prev: any, action: any) => {
+  alert(prev);
+  switch (action.type) {
+    case "LEFT":
+      return prev < TABS.length - 1 ? prev + 1 : prev;
+    case "RIGHT":
+      return prev > 0 ? prev + 1 : prev;
+    default:
+      throw new Error("unknown action type");
+  }
+};
