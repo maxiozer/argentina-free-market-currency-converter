@@ -18,7 +18,7 @@ import { useAtom } from "jotai";
 import {
   changeCurrentTabAtom,
   getDolarBlueAtom,
-  getDolarTuristaAtom
+  getDolarTuristaAtom,
 } from "../atom";
 import EvolutionChart from "./components/EvolutionChart";
 import { useSwipeable } from "react-swipeable";

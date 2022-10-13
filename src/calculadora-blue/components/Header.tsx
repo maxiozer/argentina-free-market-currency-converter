@@ -2,10 +2,10 @@ import React from "react";
 import { AppBar, Toolbar, Typography, Tabs, Tab } from "@material-ui/core";
 import { TABS } from "../constants";
 import { useAtom } from "jotai";
-import { currentTabAtom } from "../../atom";
+import { changeCurrentTabAtom } from "../../atom";
 
 export default function Header() {
-  const [currentTabId, setCurrentTabId] = useAtom(currentTabAtom);
+  const [currentTabId, setCurrentTabId] = useAtom(changeCurrentTabAtom);
 
   const onTabChange = (event: unknown, newValue: number) =>
     setCurrentTabId(newValue);
