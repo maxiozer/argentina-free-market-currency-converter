@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, Suspense } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Box,
@@ -6,11 +6,8 @@ import {
   Container,
   CssBaseline,
   Divider,
-  LinearProgress,
   Toolbar,
 } from "@material-ui/core";
-import { EvolutionChartData } from "./types";
-import { fetchEvolution, generateEvolutionChartData } from "./common";
 
 import Header from "./components/Header";
 
@@ -20,7 +17,6 @@ import TabPanel from "./components/TabPanel";
 import { useAtom } from "jotai";
 import { getDolarBlueAtom, getDolarTuristaAtom } from "../atom";
 import EvolutionChart from "./components/EvolutionChart";
-import LoadingForm from "./components/LoadingForm";
 
 export default function App() {
   const classes = useStyles();

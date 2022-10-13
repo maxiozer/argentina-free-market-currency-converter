@@ -72,5 +72,17 @@ export const getCurrencyListAtom = atom<Promise<Currencies>>(async () =>
 
 export const getEvolutionChartAtom = atom<Promise<EvolutionChartData[]>>(
   async () =>
-    fetchEvolution().then((evolution) => generateEvolutionChartData(evolution))
+    fetchEvolution()
+      .then((evolution) => {
+        const evolutionChartData = generateEvolutionChartData(evolution);
+        localStorage.setItem(
+          "evolution_chart",
+          JSON.stringify(evolutionChartData)
+        );
+
+        return evolutionChartData;
+      })
+      .catch(() =>
+        JSON.parse(localStorage.getItem("evolution_chart") || "")
+      )
 );

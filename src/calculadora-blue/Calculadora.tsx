@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, TextField, Divider } from "@material-ui/core";
+import { Grid, TextField } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Currency } from "./types";
 import { convertFromArs, convertToArs } from "./common";
 
 import CurrencyValues from "./components/CurrencyValue";
 import LastUpdate from "./components/LastUpdate";
-import EvolutionChart from "./components/EvolutionChart";
 
 import firebase from "firebase/app";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Divider, Grid } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 
 import {
   ArgumentAxis,
