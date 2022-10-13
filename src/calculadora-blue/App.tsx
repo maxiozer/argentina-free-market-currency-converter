@@ -37,10 +37,10 @@ export default function App() {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      <Header tabId={tabId} onTabChange={onTabChange}></Header>
-      <Toolbar />
-      <Toolbar />
       <div className={classes.paper}>
+        <Header tabId={tabId} onTabChange={onTabChange}/>
+        <Toolbar/>
+        <Toolbar/>
         <PWAPrompt timesToShow={3} permanentlyHideOnDismiss={false} />
         <TabPanel value={tabId} index={0}>
           <Calculadora
@@ -59,6 +59,7 @@ export default function App() {
             isLoadingEvolutionChart={isLoadingEvolutionChart}
             evolutionChart={evolutionChart}
           />
+          
         </TabPanel>
       </div>
     </Container>
