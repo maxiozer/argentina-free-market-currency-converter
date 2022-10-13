@@ -8,8 +8,10 @@ const GrayTextTypography = withStyles({
   },
 })(Typography);
 
-export default function LastUpdate() {
-  const updateDate = new Date();
+interface LastUpdateInterface{
+  updateDate: Date;
+}
+export default function LastUpdate({updateDate}:LastUpdateInterface) {
 
   return (
     <GrayTextTypography align="center" variant="subtitle2">
