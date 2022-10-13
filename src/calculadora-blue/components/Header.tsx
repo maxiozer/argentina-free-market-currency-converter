@@ -31,6 +31,7 @@ export default function Header(props: HeaderProps) {
       >
         <Tab label="Dolar blue" {...a11yProps(0)} />
         <Tab label="Dolar Turista" {...a11yProps(1)} />
+        <Tab label="Dolar Qatar" {...a11yProps(2)} />
       </Tabs>
     </AppBar>
   );

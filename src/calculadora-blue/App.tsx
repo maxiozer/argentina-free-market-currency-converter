@@ -1,6 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Container, CssBaseline, Toolbar } from "@material-ui/core";
+import {
+  Box,
+  CircularProgress,
+  Container,
+  CssBaseline,
+  Divider,
+  LinearProgress,
+  Toolbar,
+} from "@material-ui/core";
 import { EvolutionChartData } from "./types";
 import { fetchEvolution, generateEvolutionChartData } from "./common";
 
@@ -11,55 +19,62 @@ import Calculadora from "./Calculadora";
 import TabPanel from "./components/TabPanel";
 import { useAtom } from "jotai";
 import { getDolarBlueAtom, getDolarTuristaAtom } from "../atom";
+import EvolutionChart from "./components/EvolutionChart";
+import LoadingForm from "./components/LoadingForm";
 
 export default function App() {
   const classes = useStyles();
-  const [isLoadingEvolutionChart, setIsLoadingEvolutionChart] = useState(true);
-
-  const [evolutionChart, setEvolutionChart] = useState<EvolutionChartData[]>(
-    []
-  );
-
   const [blueConvertionRate] = useAtom(getDolarBlueAtom);
   const [turistaConvertionRate] = useAtom(getDolarTuristaAtom);
-
-  useEffect(() => {
-    fetchEvolution().then((evolution) => {
-      const evolutionChart = generateEvolutionChartData(evolution);
-      setEvolutionChart(evolutionChart);
-      setIsLoadingEvolutionChart(false);
-    });
-  }, []);
 
   const [tabId, setTabId] = useState(0);
   const onTabChange = (event: unknown, newValue: number) => setTabId(newValue);
 
   return (
     <Container component="main" maxWidth="xs">
-      <CssBaseline />
       <div className={classes.paper}>
-        <Header tabId={tabId} onTabChange={onTabChange}/>
-        <Toolbar/>
-        <Toolbar/>
+        <CssBaseline />
+        <Header tabId={tabId} onTabChange={onTabChange} />
+        <Toolbar />
+        <Toolbar />
         <PWAPrompt timesToShow={3} permanentlyHideOnDismiss={false} />
         <TabPanel value={tabId} index={0}>
           <Calculadora
             buyPrice={blueConvertionRate.compra}
             sellPrice={blueConvertionRate.venta}
             lastUpdate={new Date(blueConvertionRate.fecha)}
-            isLoadingEvolutionChart={isLoadingEvolutionChart}
-            evolutionChart={evolutionChart}
           />
+          <Box m={1} pt={1}>
+            <Divider variant="middle" />
+          </Box>
+          <Suspense
+            fallback={
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height={370}
+              >
+                <CircularProgress />
+              </Box>
+            }
+          >
+            <EvolutionChart />
+          </Suspense>
         </TabPanel>
         <TabPanel value={tabId} index={1}>
           <Calculadora
             buyPrice={turistaConvertionRate.compra}
             sellPrice={turistaConvertionRate.venta}
             lastUpdate={new Date(turistaConvertionRate.fecha)}
-            isLoadingEvolutionChart={isLoadingEvolutionChart}
-            evolutionChart={evolutionChart}
           />
-          
+        </TabPanel>
+        <TabPanel value={tabId} index={2}>
+          <Calculadora
+            buyPrice={turistaConvertionRate.compra}
+            sellPrice={turistaConvertionRate.venta * 1.25}
+            lastUpdate={new Date(turistaConvertionRate.fecha)}
+          />
         </TabPanel>
       </div>
     </Container>

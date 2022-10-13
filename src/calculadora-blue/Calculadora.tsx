@@ -23,16 +23,12 @@ interface CalculadoraProps {
   buyPrice: number;
   sellPrice: number;
   lastUpdate: Date;
-  isLoadingEvolutionChart: any;
-  evolutionChart: any;
 }
 
 export default function Calculadora({
   sellPrice,
   buyPrice,
   lastUpdate,
-  isLoadingEvolutionChart,
-  evolutionChart,
 }: CalculadoraProps) {
   const classes = useStyles();
   const [convertedAmount, setConvertedAmount] = useState(0);
@@ -163,15 +159,6 @@ export default function Calculadora({
           <TextField type="text" value="Pesos Argentinos" disabled={true} />
         </Grid>
       </Grid>
-      <Grid item xs={12} sm={12}>
-        <Divider variant="middle" />
-      </Grid>
-      {/* <Grid item xs={12} sm={12}>
-        <EvolutionChart
-          data={evolutionChart}
-          isLoading={isLoadingEvolutionChart}
-        />
-      </Grid> */}
     </Grid>
   );
 }

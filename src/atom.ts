@@ -5,7 +5,9 @@ import {
   fetchBlueConvertionRate,
   fetchCurrencies,
   fetchDolarTurista,
+  fetchEvolution,
   fetchLocationCurrency,
+  generateEvolutionChartData,
 } from "./calculadora-blue/common";
 import {
   DEFAULT_CURRENCY,
@@ -15,6 +17,7 @@ import {
   Currencies,
   Currency,
   DolarArgentinaResponse,
+  EvolutionChartData,
 } from "./calculadora-blue/types";
 
 export const currencyToConvertAtom = atomWithStorage<Currency | undefined>(
@@ -65,4 +68,9 @@ export const getCurrencyListAtom = atom<Promise<Currencies>>(async () =>
   fetchCurrencies().then((fetchedCurrencies) =>
     createCurrencyList(fetchedCurrencies)
   )
+);
+
+export const getEvolutionChartAtom = atom<Promise<EvolutionChartData[]>>(
+  async () =>
+    fetchEvolution().then((evolution) => generateEvolutionChartData(evolution))
 );
