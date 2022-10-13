@@ -4,9 +4,9 @@ import {
   KeyValObject,
   EvolutionResponse,
   EvolutionChartData,
+  // DolarArgentinaResponse,
 } from "../types";
 import { AVAIABLE_CURRENCIES } from "../constants";
-import { blue } from "@material-ui/core/colors";
 import lodash from "lodash";
 
 export const fetchLocationCurrency = async () => {
@@ -15,16 +15,25 @@ export const fetchLocationCurrency = async () => {
   return data;
 };
 
-export const fetchBlueConvertionRate = async () => {
-  const { data } = await axios.get("https://api.bluelytics.com.ar/v2/latest");
+export const fetchDolarTurista = async () => {
+  const { data } = await axios.get(
+    "https://cors-solucion.herokuapp.com/https://api-dolar-argentina.herokuapp.com/api/dolarturista"
+  );
 
   return {
-    ...data,
-    blue: {
-      ...blue,
-      value_sell: Math.round(data.blue.value_sell),
-      value_buy: Math.round(data.blue.value_buy),
-    },
+    compra: parseInt(data.compra),
+    venta: parseInt(data.venta),
+    fecha: new Date(data.fecha),
+  };
+};
+
+export const fetchBlueConvertionRate = async () => {
+  const { data } = await axios.get("https://cors-solucion.herokuapp.com/https://api-dolar-argentina.herokuapp.com/api/dolarblue");
+
+  return {
+    compra: parseInt(data.compra),
+    venta: parseInt(data.venta),
+    fecha: new Date(data.fecha),
   };
 };
 

@@ -12,7 +12,9 @@ import EvolutionChart from "./components/EvolutionChart";
 import firebase from "firebase/app";
 
 interface CalculadoraProps {
-  convertionRate: any;
+  buyPrice: number;
+  sellPrice: number;
+  lastUpdate: Date;
   currencyToConvert: Currency | undefined;
   currencyList: Currencies;
   setCurrencyToConvert: any;
@@ -21,7 +23,9 @@ interface CalculadoraProps {
 }
 
 export default function Calculadora({
-  convertionRate,
+  sellPrice,
+  buyPrice,
+  lastUpdate,
   currencyToConvert,
   currencyList,
   setCurrencyToConvert,
@@ -34,30 +38,30 @@ export default function Calculadora({
   const [arsToConvert, setArsToConvert] = useState(1);
 
   useEffect(() => {
-    if (convertionRate) setArsToConvert(convertionRate.value_sell);
-  }, [convertionRate]);
+    if (sellPrice) setArsToConvert(sellPrice);
+  }, [sellPrice]);
 
   useEffect(() => {
     if (isConvertingToArs.current) {
       isConvertingToArs.current = false;
-    } else if (currencyToConvert && convertionRate) {
+    } else if (currencyToConvert && sellPrice) {
       const convertedAmount = convertFromArs(
         arsToConvert,
-        convertionRate.value_buy,
+        buyPrice || sellPrice,
         currencyToConvert.value
       );
       setConvertedAmount(convertedAmount);
     }
-  }, [currencyToConvert, arsToConvert, convertionRate]);
+  }, [currencyToConvert, arsToConvert, buyPrice, sellPrice]);
 
   const onConvertedAmountChange = useCallback(
     (event: React.ChangeEvent<{ value: unknown }>) => {
       const convertedAmount = event.target.value as number;
 
-      if (currencyToConvert && convertionRate) {
+      if (currencyToConvert && sellPrice) {
         const ars = convertToArs(
           convertedAmount,
-          convertionRate.value_sell,
+          sellPrice,
           currencyToConvert.value
         );
 
@@ -71,7 +75,7 @@ export default function Calculadora({
 
       setConvertedAmount(convertedAmount);
     },
-    [convertionRate, currencyToConvert]
+    [sellPrice, currencyToConvert]
   );
 
   const onCurrencyToConvertChange = useCallback(
@@ -105,8 +109,8 @@ export default function Calculadora({
     <Grid container spacing={2}>
       <Grid container item spacing={1}>
         <Grid item xs={12} sm={12}>
-          <CurrencyValues convertionRate={convertionRate} />
-          <LastUpdate />
+          <CurrencyValues buyPrice={buyPrice} sellPrice={sellPrice} />
+          <LastUpdate updateDate={lastUpdate} />
         </Grid>
       </Grid>
       <Grid container item spacing={1}>
@@ -134,7 +138,6 @@ export default function Calculadora({
         <Grid item xs={5} sm={6}>
           <TextField
             type="number"
-            autoFocus
             onChange={handleArsToConvertChange}
             value={arsToConvert}
           />
