@@ -10,7 +10,7 @@ import App from "./calculadora-blue/App";
 import { createTheme } from "@material-ui/core/styles";
 import { hotjar } from "react-hotjar";
 import { firebaseConfig, appThemeOptions, HOTJAR_ID } from "./constants";
-import LoadingForm from "./calculadora-blue/components/LoadingForm";
+import LoadingForm from "./common/components/LoadingForm";
 
 const appTheme = createTheme(appThemeOptions);
 
