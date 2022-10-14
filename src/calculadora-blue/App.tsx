@@ -4,7 +4,7 @@ import {
   Container,
   CssBaseline,
   Divider,
-  Toolbar
+  Toolbar,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { Suspense } from "react";
@@ -18,17 +18,17 @@ import {
   changeCurrentTabAtom,
   getDolarBlueAtom,
   getDolarQatarAtom,
-  getDolarTuristaAtom
+  getDolarTuristaAtom,
 } from "./common/atom";
-import Calculadora from "./components/Calculadora";
+import CurrencyConverter from "./components/CurrencyConverter";
 import EvolutionChart from "./components/EvolutionChart";
 import TabPanel from "./components/TabPanel";
 
 export default function App() {
   const classes = useStyles();
-  const [blueConvertionRate] = useAtom(getDolarBlueAtom);
-  const [turistaConvertionRate] = useAtom(getDolarTuristaAtom);
-  const [qatarConvertionRate] = useAtom(getDolarQatarAtom);
+  const [dolarBlue] = useAtom(getDolarBlueAtom);
+  const [dolarTurista] = useAtom(getDolarTuristaAtom);
+  const [dolarQatar] = useAtom(getDolarQatarAtom);
 
   const [currentTabId, changeCurrentTab] = useAtom(changeCurrentTabAtom);
 
@@ -39,34 +39,20 @@ export default function App() {
 
   return (
     <Container component="main" maxWidth="sm" {...swipeConfig}>
-      <Box
-        height="100vh"
-        display="flex"
-        flexDirection="column"
-        className={classes.paper}
-      >
+      <Box className={classes.paper}>
         <CssBaseline />
         <Header />
         <Toolbar />
         <Toolbar />
         <PWAPrompt timesToShow={3} permanentlyHideOnDismiss={false} />
         <TabPanel value={currentTabId} index={0}>
-          <Calculadora
-            buyPrice={blueConvertionRate.compra}
-            sellPrice={blueConvertionRate.venta}
-            lastUpdate={new Date(blueConvertionRate.fecha)}
-          />
+          <CurrencyConverter {...dolarBlue} />
           <Box m={1} pt={1}>
-            <Divider variant="middle" />
+            <Divider />
           </Box>
           <Suspense
             fallback={
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                height={370}
-              >
+              <Box className={classes.evolutionLoading}>
                 <CircularProgress />
               </Box>
             }
@@ -75,18 +61,10 @@ export default function App() {
           </Suspense>
         </TabPanel>
         <TabPanel value={currentTabId} index={1}>
-          <Calculadora
-            buyPrice={turistaConvertionRate.compra}
-            sellPrice={turistaConvertionRate.venta}
-            lastUpdate={new Date(turistaConvertionRate.fecha)}
-          />
+          <CurrencyConverter {...dolarTurista} />
         </TabPanel>
         <TabPanel value={currentTabId} index={2}>
-          <Calculadora
-            buyPrice={qatarConvertionRate.compra}
-            sellPrice={qatarConvertionRate.venta}
-            lastUpdate={new Date(qatarConvertionRate.fecha)}
-          />
+          <CurrencyConverter {...dolarQatar} />
         </TabPanel>
       </Box>
     </Container>
@@ -99,5 +77,12 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    height: "100vh",
+  },
+  evolutionLoading: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: 370,
   },
 }));

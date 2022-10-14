@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { convertFromArs, convertToArs } from "../common/functions";
-import { Currency } from "../common/types";
+import { Currency, DolarArgentinaResponse } from "../common/types";
 
 import CurrencyValues from "./CurrencyValue";
 import LastUpdate from "./LastUpdate";
@@ -12,21 +12,17 @@ import firebase from "firebase/app";
 
 import { useAtom } from "jotai";
 import {
-  currencyToConvertAtom, getCurrencyListAtom, getLocationCurrencyAtom
+  currencyToConvertAtom,
+  getCurrencyListAtom,
+  getLocationCurrencyAtom,
 } from "../common/atom";
 import { DEFAULT_CURRENCY_LIST_ITEM } from "../common/constants";
 
-interface CalculadoraProps {
-  buyPrice: number;
-  sellPrice: number;
-  lastUpdate: Date;
-}
-
-export default function Calculadora({
-  sellPrice,
-  buyPrice,
-  lastUpdate,
-}: CalculadoraProps) {
+export default function CurrencyConverter({
+  venta: sell,
+  compra: buy,
+  fecha: lastUpdate,
+}: DolarArgentinaResponse) {
   const classes = useStyles();
   const [convertedAmount, setConvertedAmount] = useState(0);
   const isConvertingToArs = useRef(false);
@@ -39,21 +35,21 @@ export default function Calculadora({
   const [locationCurrency] = useAtom(getLocationCurrencyAtom);
 
   useEffect(() => {
-    if (sellPrice) setArsToConvert(sellPrice);
-  }, [sellPrice]);
+    if (sell) setArsToConvert(sell);
+  }, [sell]);
 
   useEffect(() => {
     if (isConvertingToArs.current) {
       isConvertingToArs.current = false;
-    } else if (currencyToConvert && sellPrice) {
+    } else if (currencyToConvert && sell) {
       const convertedAmount = convertFromArs(
         arsToConvert,
-        buyPrice || sellPrice,
+        buy || sell,
         currencyToConvert.value
       );
       setConvertedAmount(convertedAmount);
     }
-  }, [currencyToConvert, arsToConvert, buyPrice, sellPrice]);
+  }, [currencyToConvert, arsToConvert, buy, sell]);
 
   useEffect(() => {
     if (currencyToConvert === DEFAULT_CURRENCY_LIST_ITEM) {
@@ -68,10 +64,10 @@ export default function Calculadora({
     (event: React.ChangeEvent<{ value: unknown }>) => {
       const convertedAmount = event.target.value as number;
 
-      if (currencyToConvert && sellPrice) {
+      if (currencyToConvert && sell) {
         const ars = convertToArs(
           convertedAmount,
-          sellPrice,
+          sell,
           currencyToConvert.value
         );
 
@@ -85,7 +81,7 @@ export default function Calculadora({
 
       setConvertedAmount(convertedAmount);
     },
-    [sellPrice, currencyToConvert]
+    [sell, currencyToConvert]
   );
 
   const onCurrencyToConvertChange = useCallback(
@@ -119,7 +115,7 @@ export default function Calculadora({
     <Grid container spacing={2}>
       <Grid container item spacing={1}>
         <Grid item xs={12} sm={12}>
-          <CurrencyValues buyPrice={buyPrice} sellPrice={sellPrice} />
+          <CurrencyValues buyPrice={buy} sellPrice={sell} />
           <LastUpdate updateDate={lastUpdate} />
         </Grid>
       </Grid>
@@ -153,7 +149,12 @@ export default function Calculadora({
           />
         </Grid>
         <Grid item xs={7} sm={7}>
-          <TextField type="text" value="Pesos Argentinos (ARS)" disabled={true} fullWidth />
+          <TextField
+            type="text"
+            value="Pesos Argentinos (ARS)"
+            disabled={true}
+            fullWidth
+          />
         </Grid>
       </Grid>
     </Grid>

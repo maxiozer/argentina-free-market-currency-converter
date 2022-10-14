@@ -22,6 +22,12 @@ import {
   EvolutionChartData,
 } from "./types";
 
+const TURISTA_LS_KEY = "turista";
+const BLUE_LS_KEY = "blue";
+const QATAR_LS_KEY = "qatar";
+const EVOLUTION_CHART_LS_KEY = "evolution_chart";
+const CURRENT_TAB_LS_KEY = "current_tab";
+
 export const currencyToConvertAtom = atomWithStorage<Currency | undefined>(
   "currency_to_convert",
   DEFAULT_CURRENCY_LIST_ITEM
@@ -43,27 +49,20 @@ export const getDolarTuristaAtom = atom<Promise<DolarArgentinaResponse>>(
   async () =>
     fetchDolarTurista()
       .then((dolarturista) => {
-        localStorage.setItem(
-          "turista_convertion_rate",
-          JSON.stringify(dolarturista)
-        );
+        localStorage.setItem(TURISTA_LS_KEY, JSON.stringify(dolarturista));
         return dolarturista;
       })
-      .catch(() =>
-        JSON.parse(localStorage.getItem("turista_convertion_rate") || "")
-      )
+      .catch(() => JSON.parse(localStorage.getItem(TURISTA_LS_KEY) || ""))
 );
 
 export const getDolarBlueAtom = atom<Promise<DolarArgentinaResponse>>(
   async () =>
     fetchBlueConvertionRate()
       .then((dolarBlue) => {
-        localStorage.setItem("blue_convertion_rate", JSON.stringify(dolarBlue));
+        localStorage.setItem(BLUE_LS_KEY, JSON.stringify(dolarBlue));
         return dolarBlue;
       })
-      .catch(() =>
-        JSON.parse(localStorage.getItem("blue_convertion_rate") || "")
-      )
+      .catch(() => JSON.parse(localStorage.getItem(BLUE_LS_KEY) || ""))
 );
 
 export const getDolarQatarAtom = atom<Promise<DolarArgentinaResponse>>(
@@ -71,18 +70,13 @@ export const getDolarQatarAtom = atom<Promise<DolarArgentinaResponse>>(
     const dolarTurista = get(getDolarTuristaAtom);
     return fetchDolarOficial()
       .then((dolarOficial) => {
-        localStorage.setItem(
-          "qatar_convertion_rate",
-          JSON.stringify(dolarOficial)
-        );
+        localStorage.setItem(QATAR_LS_KEY, JSON.stringify(dolarOficial));
         return {
           ...dolarTurista,
           venta: Math.floor(dolarTurista.venta + dolarOficial.venta * 0.25),
         };
       })
-      .catch(() =>
-        JSON.parse(localStorage.getItem("qatar_convertion_rate") || "")
-      );
+      .catch(() => JSON.parse(localStorage.getItem(QATAR_LS_KEY) || ""));
   }
 );
 
@@ -98,20 +92,22 @@ export const getEvolutionChartAtom = atom<Promise<EvolutionChartData[]>>(
       .then((evolution) => {
         const evolutionChartData = generateEvolutionChartData(evolution);
         localStorage.setItem(
-          "evolution_chart",
+          EVOLUTION_CHART_LS_KEY,
           JSON.stringify(evolutionChartData)
         );
 
         return evolutionChartData;
       })
-      .catch(() => JSON.parse(localStorage.getItem("evolution_chart") || ""))
+      .catch(() =>
+        JSON.parse(localStorage.getItem(EVOLUTION_CHART_LS_KEY) || "")
+      )
 );
 
-export const currentTabAtom = atomWithStorage<number>("current_tab", 0);
+export const currentTabAtom = atomWithStorage<number>(CURRENT_TAB_LS_KEY, 0);
 
 export const changeCurrentTabAtom = atom(
   (get) => get(currentTabAtom),
-  (get, set, newValue: number) => {
+  (_get, set, newValue: number) => {
     if (newValue > TABS.length - 1 || newValue < 0) return;
 
     set(currentTabAtom, newValue);

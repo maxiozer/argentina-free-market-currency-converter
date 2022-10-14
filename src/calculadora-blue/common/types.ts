@@ -1,7 +1,3 @@
-export interface BluelyticsResponse {
-  blue?: { value_avg: number; value_buy: number; value_sell: number };
-  last_update: Date;
-}
 export interface EvolutionResponse {
   date: Date;
   source: "Oficial" | "Blue";
