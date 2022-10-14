@@ -1,22 +1,20 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import { Grid, TextField } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { Currency } from "./types";
-import { convertFromArs, convertToArs } from "./common";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { convertFromArs, convertToArs } from "../common/functions";
+import { Currency } from "../common/types";
 
-import CurrencyValues from "./components/CurrencyValue";
-import LastUpdate from "./components/LastUpdate";
+import CurrencyValues from "./CurrencyValue";
+import LastUpdate from "./LastUpdate";
 
 import firebase from "firebase/app";
 
 import { useAtom } from "jotai";
 import {
-  getCurrencyListAtom,
-  currencyToConvertAtom,
-  getLocationCurrencyAtom,
-} from "../atom";
-import { DEFAULT_CURRENCY_LIST_ITEM } from "./constants";
+  currencyToConvertAtom, getCurrencyListAtom, getLocationCurrencyAtom
+} from "../common/atom";
+import { DEFAULT_CURRENCY_LIST_ITEM } from "../common/constants";
 
 interface CalculadoraProps {
   buyPrice: number;

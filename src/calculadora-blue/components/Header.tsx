@@ -1,8 +1,8 @@
-import React from "react";
-import { AppBar, Toolbar, Typography, Tabs, Tab } from "@material-ui/core";
-import { TABS } from "../constants";
+import { AppBar, Tab, Tabs, Toolbar, Typography } from "@material-ui/core";
 import { useAtom } from "jotai";
-import { changeCurrentTabAtom } from "../../atom";
+import React from "react";
+import { changeCurrentTabAtom } from "../common/atom";
+import { TABS } from "../common/constants";
 
 export default function Header() {
   const [currentTabId, setCurrentTabId] = useAtom(changeCurrentTabAtom);

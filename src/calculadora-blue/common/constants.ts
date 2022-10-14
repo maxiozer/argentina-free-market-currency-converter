@@ -171,8 +171,15 @@ export const AVAIABLE_CURRENCIES: KeyValObject = {
 
 export const DEFAULT_CURRENCY = "USD";
 export const DEFAULT_CURRENCY_LIST_ITEM = { code: "", name: "", value: 0 };
-export const TABS = [
-  "Dolar blue",
-  "Dolar Turista",
-  "Dolar Qatar"
-]
+export const TABS = ["Dolar blue", "Dolar Turista", "Dolar Qatar"];
+
+export const LOCATION_CURRENCY_URL = "https://ipapi.co/currency/";
+export const DOLAR_TURISTA_URL =
+  "https://cors-solucion.herokuapp.com/https://api-dolar-argentina.herokuapp.com/api/dolarturista";
+export const DOLAR_OFICIAL_URL =
+  "https://cors-solucion.herokuapp.com/https://api-dolar-argentina.herokuapp.com/api/dolaroficial";
+export const DOLAR_BLUE_URL =
+  "https://cors-solucion.herokuapp.com/https://api-dolar-argentina.herokuapp.com/api/dolarblue";
+export const CURRENCIES_URL =
+  "https://api.exchangerate.host/latest?base=USD&places=2";
+export const EVOLUTION_URL = "https://api.bluelytics.com.ar/v2/evolution.json";

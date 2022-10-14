@@ -1,24 +1,29 @@
 import axios from "axios";
+import lodash from "lodash";
+import {
+  AVAIABLE_CURRENCIES,
+  CURRENCIES_URL,
+  DOLAR_BLUE_URL,
+  DOLAR_OFICIAL_URL,
+  DOLAR_TURISTA_URL,
+  EVOLUTION_URL,
+  LOCATION_CURRENCY_URL,
+} from "./constants";
 import {
   Currencies,
-  KeyValObject,
-  EvolutionResponse,
   EvolutionChartData,
-  // DolarArgentinaResponse,
-} from "../types";
-import { AVAIABLE_CURRENCIES } from "../constants";
-import lodash from "lodash";
+  EvolutionResponse,
+  KeyValObject,
+} from "./types";
 
 export const fetchLocationCurrency = async () => {
-  const { data } = await axios.get("https://ipapi.co/currency/");
+  const { data } = await axios.get(LOCATION_CURRENCY_URL);
 
   return data;
 };
 
-export const fetchDolarTurista = async () => {
-  const { data } = await axios.get(
-    "https://cors-solucion.herokuapp.com/https://api-dolar-argentina.herokuapp.com/api/dolarturista"
-  );
+const fetchFromDolarArgentina = async (url: string) => {
+  const { data } = await axios.get(url);
 
   return {
     compra: parseInt(data.compra),
@@ -27,28 +32,23 @@ export const fetchDolarTurista = async () => {
   };
 };
 
-export const fetchBlueConvertionRate = async () => {
-  const { data } = await axios.get("https://cors-solucion.herokuapp.com/https://api-dolar-argentina.herokuapp.com/api/dolarblue");
+export const fetchDolarTurista = async () =>
+  fetchFromDolarArgentina(DOLAR_TURISTA_URL);
 
-  return {
-    compra: parseInt(data.compra),
-    venta: parseInt(data.venta),
-    fecha: new Date(data.fecha),
-  };
-};
+export const fetchDolarOficial = async () =>
+  fetchFromDolarArgentina(DOLAR_OFICIAL_URL);
+
+export const fetchBlueConvertionRate = async () =>
+  fetchFromDolarArgentina(DOLAR_BLUE_URL);
 
 export const fetchCurrencies = async () => {
-  const { data } = await axios.get(
-    "https://api.exchangerate.host/latest?base=USD&places=2"
-  );
+  const { data } = await axios.get(CURRENCIES_URL);
 
   return data.rates;
 };
 
 export const fetchEvolution = async () => {
-  const { data } = await axios.get<EvolutionResponse[]>(
-    "https://api.bluelytics.com.ar/v2/evolution.json"
-  );
+  const { data } = await axios.get<EvolutionResponse[]>(EVOLUTION_URL);
 
   return data;
 };

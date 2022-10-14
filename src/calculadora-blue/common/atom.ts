@@ -4,22 +4,23 @@ import {
   createCurrencyList,
   fetchBlueConvertionRate,
   fetchCurrencies,
+  fetchDolarOficial,
   fetchDolarTurista,
   fetchEvolution,
   fetchLocationCurrency,
   generateEvolutionChartData,
-} from "./calculadora-blue/common";
+} from "./functions";
 import {
   DEFAULT_CURRENCY,
   DEFAULT_CURRENCY_LIST_ITEM,
   TABS,
-} from "./calculadora-blue/constants";
+} from "./constants";
 import {
   Currencies,
   Currency,
   DolarArgentinaResponse,
   EvolutionChartData,
-} from "./calculadora-blue/types";
+} from "./types";
 
 export const currencyToConvertAtom = atomWithStorage<Currency | undefined>(
   "currency_to_convert",
@@ -63,6 +64,26 @@ export const getDolarBlueAtom = atom<Promise<DolarArgentinaResponse>>(
       .catch(() =>
         JSON.parse(localStorage.getItem("blue_convertion_rate") || "")
       )
+);
+
+export const getDolarQatarAtom = atom<Promise<DolarArgentinaResponse>>(
+  async (get) => {
+    const dolarTurista = get(getDolarTuristaAtom);
+    return fetchDolarOficial()
+      .then((dolarOficial) => {
+        localStorage.setItem(
+          "qatar_convertion_rate",
+          JSON.stringify(dolarOficial)
+        );
+        return {
+          ...dolarTurista,
+          venta: Math.floor(dolarTurista.venta + dolarOficial.venta * 0.25),
+        };
+      })
+      .catch(() =>
+        JSON.parse(localStorage.getItem("qatar_convertion_rate") || "")
+      );
+  }
 );
 
 export const getCurrencyListAtom = atom<Promise<Currencies>>(async () =>

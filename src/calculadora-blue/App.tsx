@@ -1,32 +1,34 @@
-import React, { Suspense } from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import {
   Box,
   CircularProgress,
   Container,
   CssBaseline,
   Divider,
-  Toolbar,
+  Toolbar
 } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import React, { Suspense } from "react";
 
 import Header from "./components/Header";
 
-import PWAPrompt from "react-ios-pwa-prompt";
-import Calculadora from "./Calculadora";
-import TabPanel from "./components/TabPanel";
 import { useAtom } from "jotai";
+import PWAPrompt from "react-ios-pwa-prompt";
+import { useSwipeable } from "react-swipeable";
 import {
   changeCurrentTabAtom,
   getDolarBlueAtom,
-  getDolarTuristaAtom,
-} from "../atom";
+  getDolarQatarAtom,
+  getDolarTuristaAtom
+} from "./common/atom";
+import Calculadora from "./components/Calculadora";
 import EvolutionChart from "./components/EvolutionChart";
-import { useSwipeable } from "react-swipeable";
+import TabPanel from "./components/TabPanel";
 
 export default function App() {
   const classes = useStyles();
   const [blueConvertionRate] = useAtom(getDolarBlueAtom);
   const [turistaConvertionRate] = useAtom(getDolarTuristaAtom);
+  const [qatarConvertionRate] = useAtom(getDolarQatarAtom);
 
   const [currentTabId, changeCurrentTab] = useAtom(changeCurrentTabAtom);
 
@@ -81,9 +83,9 @@ export default function App() {
         </TabPanel>
         <TabPanel value={currentTabId} index={2}>
           <Calculadora
-            buyPrice={turistaConvertionRate.compra}
-            sellPrice={turistaConvertionRate.venta * 1.25}
-            lastUpdate={new Date(turistaConvertionRate.fecha)}
+            buyPrice={qatarConvertionRate.compra}
+            sellPrice={qatarConvertionRate.venta}
+            lastUpdate={new Date(qatarConvertionRate.fecha)}
           />
         </TabPanel>
       </Box>

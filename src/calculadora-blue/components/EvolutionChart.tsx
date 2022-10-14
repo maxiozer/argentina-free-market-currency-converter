@@ -11,7 +11,7 @@ import {
   Title,
 } from "@devexpress/dx-react-chart-material-ui";
 import { Animation } from "@devexpress/dx-react-chart";
-import { getEvolutionChartAtom } from "../../atom";
+import { getEvolutionChartAtom } from "../common/atom";
 import { useAtom } from "jotai";
 
 export default function EvolutionChart() {
