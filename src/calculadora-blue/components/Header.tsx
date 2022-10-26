@@ -3,8 +3,23 @@ import { useAtom } from "jotai";
 import React from "react";
 import { changeCurrentTabAtom } from "../common/atom";
 import { TABS } from "../common/constants";
+import ShareIcon from "@material-ui/icons/Share";
+import { canShareUrl, shareUrl } from "../common/functions";
+import { createStyles, makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(() =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    title: {
+      flexGrow: 1,
+    },
+  }),
+);
 
 export default function Header() {
+  const classes = useStyles();
   const [currentTabId, setCurrentTabId] = useAtom(changeCurrentTabAtom);
 
   const onTabChange = (event: unknown, newValue: number) =>
@@ -18,9 +33,10 @@ export default function Header() {
   }
 
   return (
-    <AppBar position="fixed">
+    <AppBar position="fixed" className={classes.root}>
       <Toolbar>
-        <Typography variant="h6">Conversor de divisas en Dólar Blue</Typography>
+        <Typography variant="h6" className={classes.title}>Conversor Dólar Blue</Typography>
+        {canShareUrl() && <ShareIcon onClick={shareUrl}/>}
       </Toolbar>
       <Tabs
         value={currentTabId}

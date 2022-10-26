@@ -15,13 +15,13 @@ export default function LastUpdate({updateDate}:LastUpdateInterface) {
 
   return (
     <GrayTextTypography align="center" variant="subtitle2">
-      Ultima actualizacion:{" "}
+      Ultima actualización:{" "}
       {updateDate.toLocaleDateString("es-AR", {
         month: "short",
         day: "numeric",
         hour: "2-digit",
         minute: "2-digit",
       })}
-    </GrayTextTypography>
+  </GrayTextTypography>
   );
 }

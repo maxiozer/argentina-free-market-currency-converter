@@ -37,6 +37,8 @@ export default function App() {
     onSwipedRight: () => changeCurrentTab(currentTabId - 1),
   });
 
+  
+
   return (
     <Container component="main" maxWidth="sm" {...swipeConfig}>
       <Box className={classes.paper}>

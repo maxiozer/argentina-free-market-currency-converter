@@ -15,6 +15,7 @@ import {
   EvolutionResponse,
   KeyValObject,
 } from "./types";
+import firebase from "firebase/app";
 
 export const fetchLocationCurrency = async () => {
   const { data } = await axios.get(LOCATION_CURRENCY_URL);
@@ -116,4 +117,21 @@ export const generateEvolutionChartData = (
     }, <{ [key: number]: EvolutionChartData }>{});
 
   return Object.values(evolutionChartData).slice(4);
+};
+
+export const canShareUrl = () => navigator.share;
+export const shareUrl = () => {
+  if (!navigator.share) return;
+  firebase.analytics().logEvent("click_on_share");
+
+  const metaDescription =
+    document
+      .querySelector('meta[name="description"]')
+      ?.getAttribute("content") || undefined;
+
+  navigator.share({
+    url: "https://conversordolarblue.com",
+    title: document.title,
+    text: metaDescription,
+  });
 };
