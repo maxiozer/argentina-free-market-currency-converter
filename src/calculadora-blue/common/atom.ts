@@ -46,37 +46,23 @@ export const getLocationCurrencyAtom = atom(async () =>
 );
 
 export const getDolarTuristaAtom = atom<Promise<DolarArgentinaResponse>>(
-  async () =>
-    fetchDolarTurista()
-      .then((dolarturista) => {
-        localStorage.setItem(TURISTA_LS_KEY, JSON.stringify(dolarturista));
-        return dolarturista;
-      })
-      .catch(() => JSON.parse(localStorage.getItem(TURISTA_LS_KEY) || ""))
+  async () => fetchDolarTurista()
 );
 
 export const getDolarBlueAtom = atom<Promise<DolarArgentinaResponse>>(
-  async () =>
-    fetchBlueConvertionRate()
-      .then((dolarBlue) => {
-        localStorage.setItem(BLUE_LS_KEY, JSON.stringify(dolarBlue));
-        return dolarBlue;
-      })
-      .catch(() => JSON.parse(localStorage.getItem(BLUE_LS_KEY) || ""))
+  async () => fetchBlueConvertionRate()
 );
 
 export const getDolarQatarAtom = atom<Promise<DolarArgentinaResponse>>(
   async (get) => {
     const dolarTurista = get(getDolarTuristaAtom);
-    return fetchDolarOficial()
-      .then((dolarOficial) => {
-        localStorage.setItem(QATAR_LS_KEY, JSON.stringify(dolarOficial));
-        return {
-          ...dolarTurista,
-          venta: Math.floor(dolarTurista.venta + dolarOficial.venta * 0.25),
-        };
-      })
-      .catch(() => JSON.parse(localStorage.getItem(QATAR_LS_KEY) || ""));
+    return fetchDolarOficial().then((dolarOficial) => {
+      localStorage.setItem(QATAR_LS_KEY, JSON.stringify(dolarOficial));
+      return {
+        ...dolarTurista,
+        venta: Math.floor(dolarTurista.venta + dolarOficial.venta * 0.25),
+      };
+    });
   }
 );
 
@@ -88,19 +74,7 @@ export const getCurrencyListAtom = atom<Promise<Currencies>>(async () =>
 
 export const getEvolutionChartAtom = atom<Promise<EvolutionChartData[]>>(
   async () =>
-    fetchEvolution()
-      .then((evolution) => {
-        const evolutionChartData = generateEvolutionChartData(evolution);
-        localStorage.setItem(
-          EVOLUTION_CHART_LS_KEY,
-          JSON.stringify(evolutionChartData)
-        );
-
-        return evolutionChartData;
-      })
-      .catch(() =>
-        JSON.parse(localStorage.getItem(EVOLUTION_CHART_LS_KEY) || "")
-      )
+    fetchEvolution().then((evolution) => generateEvolutionChartData(evolution))
 );
 
 export const currentTabAtom = atomWithStorage<number>(CURRENT_TAB_LS_KEY, 0);
