@@ -2,10 +2,8 @@ import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import {
   createCurrencyList,
-  fetchBlueConvertionRate,
+  fetchConversionRate,
   fetchCurrencies,
-  fetchDolarOficial,
-  fetchDolarTurista,
   fetchEvolution,
   fetchLocationCurrency,
   generateEvolutionChartData,
@@ -18,14 +16,10 @@ import {
 import {
   Currencies,
   Currency,
-  DolarArgentinaResponse,
+  ConversionRate,
   EvolutionChartData,
 } from "./types";
 
-const TURISTA_LS_KEY = "turista";
-const BLUE_LS_KEY = "blue";
-const QATAR_LS_KEY = "qatar";
-const EVOLUTION_CHART_LS_KEY = "evolution_chart";
 const CURRENT_TAB_LS_KEY = "current_tab";
 
 export const currencyToConvertAtom = atomWithStorage<Currency | undefined>(
@@ -45,26 +39,37 @@ export const getLocationCurrencyAtom = atom(async () =>
     .catch(() => DEFAULT_CURRENCY)
 );
 
-export const getDolarTuristaAtom = atom<Promise<DolarArgentinaResponse>>(
-  async () => fetchDolarTurista()
-);
+export const getDolarTuristaAtom = atom<Promise<ConversionRate>>(async () => {
+  const rate = await fetchConversionRate();
+  const impuestoPais = 0.3;
+  const impuestoGanancias = 0.45;
 
-export const getDolarBlueAtom = atom<Promise<DolarArgentinaResponse>>(
-  async () => fetchBlueConvertionRate()
-);
+  return {
+    ...rate.oficial,
+    compra: 0,
+    venta: Math.round(
+      rate.oficial.venta +
+        rate.oficial.venta * impuestoPais +
+        rate.oficial.venta * impuestoGanancias
+    ),
+  };
+});
 
-export const getDolarQatarAtom = atom<Promise<DolarArgentinaResponse>>(
-  async (get) => {
-    const dolarTurista = get(getDolarTuristaAtom);
-    return fetchDolarOficial().then((dolarOficial) => {
-      localStorage.setItem(QATAR_LS_KEY, JSON.stringify(dolarOficial));
-      return {
-        ...dolarTurista,
-        venta: Math.floor(dolarTurista.venta + dolarOficial.venta * 0.25),
-      };
-    });
-  }
-);
+export const getDolarBlueAtom = atom<Promise<ConversionRate>>(async () => {
+  const rate = await fetchConversionRate();
+  return rate.blue;
+});
+
+export const getDolarQatarAtom = atom<Promise<ConversionRate>>(async (get) => {
+  const dolarTurista = get(getDolarTuristaAtom);
+  return fetchConversionRate().then((dolar) => {
+    return {
+      ...dolarTurista,
+      venta: Math.floor(dolarTurista.venta + dolar.oficial.venta * 0.25),
+      compra: 0,
+    };
+  });
+});
 
 export const getCurrencyListAtom = atom<Promise<Currencies>>(async () =>
   fetchCurrencies().then((fetchedCurrencies) =>

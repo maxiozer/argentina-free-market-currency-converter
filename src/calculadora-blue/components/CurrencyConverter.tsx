@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { convertFromArs, convertToArs } from "../common/functions";
-import { Currency, DolarArgentinaResponse } from "../common/types";
+import { Currency, ConversionRate } from "../common/types";
 
 import CurrencyValues from "./CurrencyValue";
 import LastUpdate from "./LastUpdate";
@@ -22,7 +22,7 @@ export default function CurrencyConverter({
   venta: sell,
   compra: buy,
   fecha: lastUpdate,
-}: DolarArgentinaResponse) {
+}: ConversionRate) {
   const classes = useStyles();
   const [convertedAmount, setConvertedAmount] = useState(0);
   const isConvertingToArs = useRef(false);

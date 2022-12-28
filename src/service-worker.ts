@@ -80,29 +80,29 @@ self.addEventListener("message", (event) => {
 
 // Any other custom service worker logic can go here.
 // Establish a cache name
-const cacheName = "cache_api_requests";
+// const cacheName = "cache_api_requests";
 
-self.addEventListener("fetch", (event) => {
-  // Check if this is a navigation request
-  if (event.request.method === "GET") {
-    // Open the cache
-    event.respondWith(
-      // @ts-ignore
-      caches.open(cacheName).then((cache) => {
-        // Go to the network first
-        return fetch(event.request.url)
-          .then((fetchedResponse) => {
-            cache.put(event.request, fetchedResponse.clone());
+// self.addEventListener("fetch", (event) => {
+//   // Check if this is a navigation request
+//   if (event.request.method === "GET") {
+//     // Open the cache
+//     event.respondWith(
+//       // @ts-ignore
+//       caches.open(cacheName).then((cache) => {
+//         // Go to the network first
+//         return fetch(event.request.url)
+//           .then((fetchedResponse) => {
+//             cache.put(event.request, fetchedResponse.clone());
 
-            return fetchedResponse;
-          })
-          .catch(() => {
-            // If the network is unavailable, get
-            return cache.match(event.request.url);
-          });
-      })
-    );
-  } else {
-    return;
-  }
-});
+//             return fetchedResponse;
+//           })
+//           .catch(() => {
+//             // If the network is unavailable, get
+//             return cache.match(event.request.url);
+//           });
+//       })
+//     );
+//   } else {
+//     return;
+//   }
+// });

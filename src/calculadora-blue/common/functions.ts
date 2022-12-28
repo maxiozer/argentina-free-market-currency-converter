@@ -1,11 +1,9 @@
 import axios from "axios";
 import lodash from "lodash";
 import {
-  AVAIABLE_CURRENCIES,
+  AVAILABLE_CURRENCIES,
   CURRENCIES_URL,
   DOLAR_BLUE_URL,
-  DOLAR_OFICIAL_URL,
-  DOLAR_TURISTA_URL,
   EVOLUTION_URL,
   LOCATION_CURRENCY_URL,
 } from "./constants";
@@ -23,24 +21,23 @@ export const fetchLocationCurrency = async () => {
   return data;
 };
 
-const fetchFromDolarArgentina = async (url: string) => {
-  const { data } = await axios.get(url);
+export const fetchConversionRate = async () => {
+  const { data } = await axios.get(DOLAR_BLUE_URL);
 
+  const fecha = new Date(data.last_update);
   return {
-    compra: parseInt(data.compra),
-    venta: parseInt(data.venta),
-    fecha: new Date(data.fecha),
+    blue: {
+      compra: parseInt(data.blue.value_buy),
+      venta: parseInt(data.blue.value_sell),
+      fecha,
+    },
+    oficial: {
+      compra: parseInt(data.oficial.value_buy),
+      venta: parseInt(data.oficial.value_sell),
+      fecha,
+    },
   };
 };
-
-export const fetchDolarTurista = async () =>
-  fetchFromDolarArgentina(DOLAR_TURISTA_URL);
-
-export const fetchDolarOficial = async () =>
-  fetchFromDolarArgentina(DOLAR_OFICIAL_URL);
-
-export const fetchBlueConvertionRate = async () =>
-  fetchFromDolarArgentina(DOLAR_BLUE_URL);
 
 export const fetchCurrencies = async () => {
   const { data } = await axios.get(CURRENCIES_URL);
@@ -77,16 +74,16 @@ export const convertToArs = (
 export const createCurrencyList = (
   fetchedCurrencies: KeyValObject
 ): Currencies => {
-  const avaiableCurrencies = Object.keys(AVAIABLE_CURRENCIES).filter(
-    (avaiableCurrency) => avaiableCurrency in fetchedCurrencies
+  const availableCurrencies = Object.keys(AVAILABLE_CURRENCIES).filter(
+    (availableCurrency) => availableCurrency in fetchedCurrencies
   );
 
-  const currencyList: Currencies = avaiableCurrencies.map(
-    (avaiableCurrency: string) => {
+  const currencyList: Currencies = availableCurrencies.map(
+    (availableCurrency: string) => {
       return {
-        code: avaiableCurrency,
-        name: `${AVAIABLE_CURRENCIES[avaiableCurrency]} (${avaiableCurrency})`,
-        value: fetchedCurrencies[avaiableCurrency],
+        code: availableCurrency,
+        name: `${AVAILABLE_CURRENCIES[availableCurrency]} (${availableCurrency})`,
+        value: fetchedCurrencies[availableCurrency],
       };
     }
   );

@@ -1,7 +1,7 @@
 import { KeyValObject } from "./types";
 
-export const AVAIABLE_CURRENCIES: KeyValObject = {
-  // AFN: "Afgani",
+export const AVAILABLE_CURRENCIES: KeyValObject = {
+  // AFN: "Afghani",
   // MGA: "Ariary malgache",
   // THB: "Baht",
   // PAB: "Balboa",
@@ -25,21 +25,20 @@ export const AVAIABLE_CURRENCIES: KeyValObject = {
   // MKD: "Denar",
   // XDR: "Derechos especiales de giro",
   // DZD: "Dinar argelino",
-  // BHD: "Dinar bareiní",
+  // BHD: "Dinar bahreiní",
   // IQD: "Dinar iraquí",
   // JOD: "Dinar jordano",
   // KWD: "Dinar kuwaití",
   // LYD: "Dinar libio",
   // RSD: "Dinar serbio",
   // TND: "Dinar tunecino",
-  // AED: "Dírham de los Emiratos Árabes Unidos",
-  // MAD: "Dírham marroquí",
+  // AED: "Dirham de los Emiratos Árabes Unidos",
+  // MAD: "Dirham marroquí",
   // STN: "Dobra",
   AUD: "Dólar australiano",
   // BSD: "Dólar bahameño",
   // BBD: "Dólar barbadense",
   // BZD: "Dólar beliceño",
-  // BMD: "Dólar bermudeño",
   CAD: "Dólar canadiense",
   // BND: "Dólar de Brunéi",
   // HKD: "Dólar de Hong Kong",
@@ -62,8 +61,6 @@ export const AVAIABLE_CURRENCIES: KeyValObject = {
   // CVE: "Escudo caboverdiano",
   EUR: "Euro",
   // ANG: "Florín antillano neerlandés",
-  // AWG: "Florín arubeño",
-  // HUF: "Forinto",
   // XAF: "Franco CFA de África Central",
   // XOF: "Franco CFA de África Occidental",
   // XPF: "Franco CFP",
@@ -75,7 +72,6 @@ export const AVAIABLE_CURRENCIES: KeyValObject = {
   CHF: "Franco suizo",
   // DJF: "Franco yibutiano",
   // HTG: "Gourde",
-  // UAH: "Grivna",
   PYG: "Guaraní",
   // PGK: "Kina",
   // LAK: "Kip",
@@ -148,7 +144,7 @@ export const AVAIABLE_CURRENCIES: KeyValObject = {
   // IDR: "Rupia indonesia",
   // NPR: "Rupia nepalí",
   // PKR: "Rupia pakistaní",
-  // SCR: "Rupia seychelense",
+  // SCR: "Rupia seychellense",
   PEN: "Sol",
   // KGS: "Som",
   // UZS: "Som uzbeko",
@@ -166,7 +162,7 @@ export const AVAIABLE_CURRENCIES: KeyValObject = {
   // KPW: "Won norcoreano",
   JPY: "Yen",
   CNY: "Yuan chino",
-  // PLN: "Złoty",
+  PLN: "Zloty",
 };
 
 export const DEFAULT_CURRENCY = "USD";
@@ -174,12 +170,7 @@ export const DEFAULT_CURRENCY_LIST_ITEM = { code: "", name: "", value: 0 };
 export const TABS = ["Dolar blue", "Dolar Turista", "Dolar Qatar"];
 
 export const LOCATION_CURRENCY_URL = "https://ipapi.co/currency/";
-export const DOLAR_TURISTA_URL =
-  "https://cors-solucion.herokuapp.com/https://api-dolar-argentina.herokuapp.com/api/dolarturista";
-export const DOLAR_OFICIAL_URL =
-  "https://cors-solucion.herokuapp.com/https://api-dolar-argentina.herokuapp.com/api/dolaroficial";
-export const DOLAR_BLUE_URL =
-  "https://cors-solucion.herokuapp.com/https://api-dolar-argentina.herokuapp.com/api/dolarblue";
+export const DOLAR_BLUE_URL = "https://api.bluelytics.com.ar/v2/latest";
 export const CURRENCIES_URL =
   "https://api.exchangerate.host/latest?base=USD&places=2";
 export const EVOLUTION_URL = "https://api.bluelytics.com.ar/v2/evolution.json";

@@ -5,7 +5,7 @@ export interface EvolutionResponse {
   value_buy: number;
 }
 
-export interface DolarArgentinaResponse {
+export interface ConversionRate {
   compra: number;
   venta: number;
   fecha: Date;
